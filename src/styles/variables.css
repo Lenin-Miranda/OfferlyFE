@@ -1,0 +1,21 @@
+:root {
+  /* Colors */
+  --color-primary: #fff;
+  --color-primary-dark: #000;
+
+  --color-secondary: #ffe1ee;
+  --color-secondary-dark: #820038;
+
+  --color-third: #f4facf;
+  --color-third-dark: #b1b1b1;
+
+  --color-success: #10b96a;
+  --color-warning: #f59e0b;
+  --color-error: #ee2121;
+  --color-info: #f4facf;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", sans-serif;
+  --font-mono: "Fira Code", "Cascadia Code", "Consolas", monospace;
+}
