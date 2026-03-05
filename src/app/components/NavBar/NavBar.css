@@ -183,3 +183,32 @@
   background-color: #6d6d6d;
   color: #fff;
 }
+
+/* ========= Responsive Mobile ========= */
+@media (max-width: 640px) {
+  .nav {
+    padding: 12px;
+  }
+
+  .nav__ctn-open {
+    width: calc(100vw - 24px);
+    max-width: none;
+    padding: 8px 12px;
+  }
+
+  .nav__logo-title-open,
+  .nav__logo-title {
+    display: none;
+  }
+
+  .nav__link-ctn-open {
+    right: 12px;
+    gap: 8px;
+  }
+
+  .nav__link,
+  .nav__link-open {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+}
