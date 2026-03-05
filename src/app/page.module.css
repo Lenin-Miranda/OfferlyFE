@@ -20,25 +20,6 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 80px 24px;
-}
-
-@media (min-width: 640px) {
-  .main {
-    padding: 100px 48px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .main {
-    padding: 120px 80px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .main {
-    padding: 120px 120px;
-  }
 }
 
 .intro {
@@ -120,7 +101,6 @@ a.secondary {
 
 @media (max-width: 600px) {
   .main {
-    padding: 48px 24px;
   }
 
   .intro {

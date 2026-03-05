@@ -1,0 +1,139 @@
+.hero {
+  width: 100%;
+  height: 100dvh;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 100;
+}
+
+.hero__title {
+  font-size: 64px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.hero__text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 100;
+  margin-bottom: 32px;
+}
+
+.hero__text-subtitle {
+  opacity: 0.5;
+  font-size: 20px;
+}
+
+.hero__btn {
+  padding: 13px 10px;
+  background-color: #000;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  border: none;
+  box-shadow: 2px 2px 10px #0000005f;
+  font-size: 18px;
+}
+
+.hero__btn:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.hero__btn:last-child {
+  background-color: #fff;
+  color: #000;
+  transition: all 0.7s ease;
+}
+
+.hero__btn:last-child:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.hero__btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  height: 100dvh;
+  z-index: 0;
+  background: radial-gradient(
+      700px 500px at 100% 25%,
+      rgba(255, 210, 90, 0.55),
+      transparent 80%
+    ),
+    radial-gradient(
+      520px 360px at 30% 100%,
+      rgba(120, 220, 170, 0.45),
+      transparent 62%
+    ),
+    radial-gradient(
+      580px 800px at 80% 100%,
+      rgba(255, 120, 180, 0.35),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 480px at 15% 25%,
+      rgba(180, 220, 255, 0.9),
+      transparent 80%
+    );
+  filter: blur(2px);
+  transform: translateZ(0);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  height: 100dvh;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 20px;
+  }
+  .hero__title {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -1.92px;
+  }
+
+  .hero__text-subtitle {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .hero__btn-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hero__btn {
+    font-size: 14px;
+    padding: 10px 8px;
+    width: 100%;
+  }
+}

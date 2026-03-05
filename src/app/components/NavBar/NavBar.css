@@ -1,0 +1,185 @@
+/* ========= Base Nav ========= */
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  padding: 24px;
+  z-index: 1000;
+}
+
+/* ========= Container ========= */
+/* Cerrado */
+.nav__ctn {
+  max-width: 600px;
+  width: 56px; /* pill cerrado */
+  height: 56px;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  top: 20px;
+  padding: 0;
+  border-radius: 18px;
+  box-shadow: 2px 2px 10px #0000005f;
+
+  overflow: hidden;
+  transition: width 1s ease-in-out, padding 1s ease-in-out;
+}
+
+/* Abierto */
+.nav__ctn-open {
+  max-width: 600px;
+  width: 100%;
+  height: 56px;
+  background-color: #000;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  position: relative;
+  top: 20px;
+
+  padding: 8px 18px;
+  border-radius: 18px;
+  box-shadow: 2px 2px 10px #0000005f;
+
+  overflow: hidden;
+  transition: width 1s ease-in-out, padding 1s ease-in-out;
+}
+
+/* ========= Logo ========= */
+/* IMPORTANTE: el logo SIEMPRE visible */
+.nav__logo-ctn {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 0 0 auto;
+  min-width: 0;
+  transform: translateX(8px);
+  transition: gap 0.3s ease, transform 1s ease-in-out;
+}
+
+.nav__logo-ctn-open {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  min-width: 0;
+  transform: translateX(0);
+  transition: gap 0.3s ease 0.8s, transform 1s ease-in-out;
+}
+
+/* botón */
+.nav__logo-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px; /* asegura espacio para el ícono */
+  height: 40px;
+}
+
+/* imagen */
+.nav__logo {
+  display: block; /* evita rarezas inline */
+  transition: transform 1s ease-in-out;
+}
+
+/* ========= Title ========= */
+/* Cerrado: oculto (pero ocupa 0 visual) */
+.nav__logo-title {
+  opacity: 0;
+  width: 0;
+  transform: translateX(-6px);
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 16px;
+  pointer-events: none;
+  transition: opacity 0.25s ease 0s, transform 0.25s ease 0.55s;
+}
+
+/* Abierto: aparece con delay */
+.nav__logo-title-open {
+  opacity: 1;
+  transform: translateX(0);
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 16px;
+  pointer-events: none;
+  transition: opacity 0.25s ease 0.55s, transform 0.25s ease 0.55s;
+}
+
+/* ========= Links ========= */
+/* Cerrado: totalmente fuera (sin afectar logo) */
+.nav__link-ctn {
+  position: absolute;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(8px);
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.5s ease 0s, transform 0.5s ease-in-out,
+    visibility 0s ease 0.3s, max-width 0.5s ease 0.3s;
+}
+
+/* Abierto */
+.nav__link-ctn-open {
+  position: absolute;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 300px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-8px);
+  transition: opacity 0.3s ease 0.6s, transform 1s ease-in,
+    max-width 0.5s ease 0.4s, visibility 0s linear 0s;
+}
+
+/* Links individuales */
+.nav__link {
+  /* no hace falta visibility hidden aquí, ya lo controla el container */
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+.nav__link-open {
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+.nav__link-open:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Botón Register */
+.nav__link-open:last-child {
+  background-color: #fff;
+  color: #000;
+}
+
+.nav__link-open:last-child:hover {
+  background-color: #6d6d6d;
+  color: #fff;
+}
