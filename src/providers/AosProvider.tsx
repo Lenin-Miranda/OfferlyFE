@@ -15,5 +15,5 @@ export default function AosProvider({
     });
   }, []);
 
-  return <>{children};</>;
+  return <>{children}</>;
 }

@@ -89,7 +89,18 @@
 /* imagen */
 .nav__logo {
   display: block; /* evita rarezas inline */
+  animation: rotation 8s linear infinite;
   transition: transform 1s ease-in-out;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ========= Title ========= */
@@ -116,8 +127,6 @@
   transition: opacity 0.25s ease 0.55s, transform 0.25s ease 0.55s;
 }
 
-/* ========= Links ========= */
-/* Cerrado: totalmente fuera (sin afectar logo) */
 .nav__link-ctn {
   position: absolute;
   right: 18px;
