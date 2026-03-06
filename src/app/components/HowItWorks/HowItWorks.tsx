@@ -1,3 +1,4 @@
+"use client";
 import "./HowItWorks.css";
 
 export default function HowItWorks() {
