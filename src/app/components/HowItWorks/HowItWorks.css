@@ -58,7 +58,7 @@
 
 .howitworks__container {
   position: relative;
-  z-index: 10;
+  z-index: 1;
   max-width: 900px;
   width: 100%;
   display: flex;
@@ -179,8 +179,6 @@
   justify-content: center;
   align-items: center;
   margin-top: 24px;
-  position: relative;
-  z-index: 100;
 }
 
 .howitworks__btn {
@@ -196,8 +194,6 @@
   font-weight: 600;
   position: relative;
   overflow: hidden;
-  z-index: 100;
-  isolation: isolate;
 }
 
 .howitworks__btn::before {
@@ -212,6 +208,7 @@
   transform: translate(-50%, -50%);
   transition: width 0.6s ease, height 0.6s ease;
   z-index: 0;
+  color: #000;
 }
 
 .howitworks__btn:hover::before {
@@ -221,11 +218,6 @@
 
 .howitworks__btn:hover {
   color: #000;
-}
-
-/* Asegurar que el texto sea visible */
-.howitworks__btn {
-  color: #fff !important;
 }
 
 .howitworks__btn span {
