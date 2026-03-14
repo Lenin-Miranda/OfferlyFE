@@ -6,6 +6,13 @@ export interface User {
   updatedAt: string;
 }
 
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+}
+
 export interface JobApplication {
   id: string;
   userId: string;
