@@ -18,7 +18,6 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      setIsMessage("Logueo Exitoso");
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 2000);
