@@ -1,15 +1,60 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import "./page.css";
 import Link from "next/link";
 import logo from "../../../public/offerly-logo.svg";
 import Image from "next/image";
+import { AuthContext } from "@/contexts/AuthContext";
 export default function Login() {
+  const { isAuthenticated, login, register } = useContext(AuthContext);
   const [isRegister, setIsRegister] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isMessage, setIsMessage] = useState("");
+  const [isForm, setIsForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setIsMessage("Logueo Exitoso");
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 2000);
+    }
+  }, [isAuthenticated]);
+
+  function setForm(field: string, value: string) {
+    setIsForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  }
 
   function togleForm(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setIsRegister((prev) => !prev);
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    try {
+      if (isRegister) {
+        await register(isForm.name, isForm.email, isForm.password);
+      } else {
+        await login(isForm.email, isForm.password);
+      }
+
+      setIsForm({
+        name: "",
+        email: "",
+        password: "",
+      });
+    } catch (e) {
+      console.error(`Error Message:`, e);
+      setIsError(true);
+    }
   }
 
   return (
@@ -23,7 +68,7 @@ export default function Login() {
           className="login__img"
         />
       </Link>
-      <form className="login__form">
+      <form className="login__form" onSubmit={handleSubmit}>
         <label
           htmlFor="name"
           className={
@@ -32,25 +77,34 @@ export default function Login() {
         >
           Name:
           <input
+            value={isForm.name}
+            type="text"
             id="name"
             className="login__form-input"
             placeholder="Enter Your Name"
+            onChange={(e) => setForm("name", e.target.value)}
           />
         </label>
         <label htmlFor="email" className="login__form-label">
           Email:
           <input
+            value={isForm.email}
+            type="email"
             placeholder="Enter Your Email"
             id="email"
             className="login__form-input"
+            onChange={(e) => setForm("email", e.target.value)}
           />
         </label>
         <label htmlFor="password" className="login__form-label">
           Password:
           <input
+            value={isForm.password}
+            type="password"
             placeholder="Enter Your Password"
             id="password"
             className="login__form-input"
+            onChange={(e) => setForm("password", e.target.value)}
           />
         </label>
 
@@ -76,12 +130,14 @@ export default function Login() {
 
         <div className="login__form-btn-ctn">
           <button
+            type="button"
             onClick={togleForm}
             className={isRegister ? "login__form-btn-hide" : "login__form-btn"}
           >
             Don't have an account?, Register here!
           </button>
           <button
+            type="button"
             onClick={togleForm}
             className={!isRegister ? "login__form-btn-hide" : "login__form-btn"}
           >

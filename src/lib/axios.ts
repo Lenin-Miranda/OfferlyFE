@@ -15,9 +15,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access - redirect to login
-      // Backend will clear the httpOnly cookie
-      window.location.href = "/login";
+      // Only redirect to login if NOT already on login page and NOT on home page
+      if (
+        window.location.pathname !== "/login" &&
+        window.location.pathname !== "/"
+      ) {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },

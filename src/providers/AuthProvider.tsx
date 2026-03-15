@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { login, register, logout, checkAuth } from "@/lib/auth";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -16,7 +17,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleLogin = async (email: string, password: string) => {
     await login(email, password);
-    setIsAuthenticated(true);
+
+    const authenticated = await checkAuth();
+    setIsAuthenticated(authenticated);
   };
 
   const handleRegister = async (
@@ -25,7 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
   ) => {
     await register(name, email, password);
-    setIsAuthenticated(true);
+    const authenticated = await checkAuth();
+    setIsAuthenticated(authenticated);
   };
 
   const handleLogout = async () => {
