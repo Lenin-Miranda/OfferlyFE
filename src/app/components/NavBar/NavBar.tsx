@@ -1,13 +1,14 @@
 "use client";
 import "./NavBar.css";
 import { useState } from "react";
+import { useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import TypeWriter from "../TypeWriter/TypeWriter";
+import { AuthContext } from "@/contexts/AuthContext";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
-
+  const { isAuthenticated } = useContext(AuthContext);
   function toggleNav() {
     setIsOpen((prev) => !prev);
   }
@@ -29,20 +30,32 @@ export default function NavBar() {
             Offerly
           </span>
         </div>
-        <div className={isOpen ? "nav__link-ctn-open" : "nav__link-ctn"}>
-          <Link
-            className={isOpen ? "nav__link-open" : "nav__link"}
-            href="/login"
-          >
-            Login
-          </Link>
-          <Link
-            className={isOpen ? "nav__link-open" : "nav__link"}
-            href="/register"
-          >
-            Register
-          </Link>
-        </div>
+        {isAuthenticated ? (
+          <div className={isOpen ? "nav__link-ctn-open" : "nav__link-ctn"}>
+            {" "}
+            <Link
+              className={isOpen ? "nav__link-open" : "nav__link"}
+              href="/dashboard"
+            >
+              Dashboard
+            </Link>
+          </div>
+        ) : (
+          <div className={isOpen ? "nav__link-ctn-open" : "nav__link-ctn"}>
+            <Link
+              className={isOpen ? "nav__link-open" : "nav__link"}
+              href="/login"
+            >
+              Login
+            </Link>
+            <Link
+              className={isOpen ? "nav__link-open" : "nav__link"}
+              href="/register"
+            >
+              Register
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );

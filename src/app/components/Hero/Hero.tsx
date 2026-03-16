@@ -5,11 +5,11 @@ export default function Hero() {
   return (
     <section className="hero">
       <div className="hero__text-container">
-        <p className="hero__text-subtitle">
+        <p data-aos="fade-down" className="hero__text-subtitle">
           Manage applications, interviews, and offers in one clean dashboard.
           Never miss a follow-up again.
         </p>
-        <h1 className="hero__title">
+        <h1 data-aos="fade-up" className="hero__title">
           Stop guessing. <br />
           <span>
             Start {""}
@@ -17,7 +17,7 @@ export default function Hero() {
           </span>
         </h1>
       </div>
-      <div className="hero__btn-container">
+      <div data-aos="fade-up" className="hero__btn-container">
         <button className="hero__btn">Start Tracking</button>
         <button className="hero__btn">See How It Works</button>
       </div>
