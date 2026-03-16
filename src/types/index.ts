@@ -13,7 +13,24 @@ export interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-export interface JobApplication {
+export interface ApplicationContextType {
+  applications: Application[];
+  addApplication: (
+    applicationData: Omit<
+      Application,
+      "id" | "userId" | "createdAt" | "updatedAt"
+    >,
+  ) => Promise<Application>;
+  deleteApplication: (id: string) => Promise<void>;
+  editApplication: (
+    id: string,
+    updates: Partial<
+      Omit<Application, "id" | "userId" | "createdAt" | "updatedAt">
+    >,
+  ) => Promise<Application>;
+}
+
+export interface Application {
   id: string;
   userId: string;
   company: string;

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import QueryProvider from "@/providers/query-providers";
 import AosProvider from "@/providers/AosProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { ApplicationProvider } from "@/providers/AplicationProvider";
 import LogoutButton from "@/app/Components/LogoutButton/LogoutButton";
 import "./globals.css";
 
@@ -30,12 +31,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          <AosProvider>
-            <QueryProvider>
-              <LogoutButton />
-              {children}
-            </QueryProvider>
-          </AosProvider>
+          <ApplicationProvider>
+            <AosProvider>
+              <QueryProvider>
+                <LogoutButton />
+                {children}
+              </QueryProvider>
+            </AosProvider>
+          </ApplicationProvider>
         </AuthProvider>
       </body>
     </html>
