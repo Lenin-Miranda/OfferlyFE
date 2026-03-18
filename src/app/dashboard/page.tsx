@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FiBookmark, FiSend, FiClock, FiCheckCircle } from "react-icons/fi";
 import "./page.css";
 import Sidebar from "./components/Sidebar";
+import ApplicationModal from "./components/ApplicationModal";
 
 // Mock data for job applications
 const mockApplications = [
@@ -112,6 +113,21 @@ const kanbanColumns = [
 ];
 
 export default function Dashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalSubmit = (data: any) => {
+    console.log("New application data:", data);
+    // Aquí puedes conectar con tu ApplicationProvider cuando esté listo
+  };
+
   const getApplicationsByStatus = (status: string) => {
     return mockApplications.filter((app) => app.status === status);
   };
@@ -174,7 +190,9 @@ export default function Dashboard() {
               Ready to add your next job application? Track your progress and
               never miss an opportunity.
             </p>
-            <button className="dashboard__ctn-btn">Add New Application</button>
+            <button className="dashboard__ctn-btn" onClick={handleOpenModal}>
+              Add New Application
+            </button>
           </div>
         </div>
 
@@ -237,6 +255,13 @@ export default function Dashboard() {
           </div>
         </div>
       </section>
+
+      <ApplicationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleModalSubmit}
+        mode="create"
+      />
     </>
   );
 }

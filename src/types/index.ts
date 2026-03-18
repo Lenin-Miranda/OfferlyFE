@@ -42,7 +42,7 @@ export interface Application {
   jobUrl?: string;
   description?: string;
   notes?: string;
-  appliedAt: string;
+  appliedAt?: string; // Opcional si no siempre tienes fecha exacta
   createdAt: string;
   updatedAt: string;
 }

@@ -4,7 +4,7 @@ import { Application } from "@/types";
 
 export const getApplications = async (): Promise<Application[]> => {
   try {
-    const response = await api.get("/api/applications");
+    const response = await api.get("/applications");
     return response.data;
   } catch (e) {
     console.error(`Error Getting applications: ${e}`);

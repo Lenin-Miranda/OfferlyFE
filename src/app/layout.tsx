@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import QueryProvider from "@/providers/query-providers";
 import AosProvider from "@/providers/AosProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
-import { ApplicationProvider } from "@/providers/AplicationProvider";
+import { ApplicationProvider } from "@/providers/ApplicationProvider";
 import LogoutButton from "@/app/Components/LogoutButton/LogoutButton";
 import "./globals.css";
 
