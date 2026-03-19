@@ -4,8 +4,9 @@ import { FiBookmark, FiSend, FiClock, FiCheckCircle } from "react-icons/fi";
 import "./page.css";
 import Sidebar from "./components/Sidebar";
 import ApplicationModal from "./components/ApplicationModal";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
 
-// Mock data for job applications
 const mockApplications = [
   {
     id: 1,
@@ -114,6 +115,7 @@ const kanbanColumns = [
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);

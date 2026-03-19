@@ -39,7 +39,7 @@
       rgba(180, 220, 255, 0.9),
       transparent 80%
     );
-  filter: blur(60px);
+
   animation: gradientShift 10s ease-in-out infinite;
   pointer-events: none;
 }

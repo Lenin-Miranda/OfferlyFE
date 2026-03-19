@@ -107,7 +107,7 @@
 
 .modal__form-icon {
   position: absolute;
-  top: 28px;
+  top: 38px;
   left: 12px;
   width: 16px;
   height: 16px;
@@ -123,6 +123,7 @@
   border-radius: 12px;
   font-size: 14px;
   transition: all 0.2s ease;
+  color: #000;
   background: #fff;
   font-family: inherit;
 }

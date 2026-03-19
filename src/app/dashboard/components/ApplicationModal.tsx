@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ApplicationStatus } from "@/types";
 import {
   FiX,
@@ -28,6 +28,7 @@ export default function ApplicationModal({
   mode = "create",
 }: ApplicationModalProps) {
   const [isAnimating, setIsAnimating] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     company: "",
     position: "",
@@ -44,6 +45,9 @@ export default function ApplicationModal({
     if (isOpen) {
       setIsAnimating(true);
       document.body.style.overflow = "hidden";
+      setTimeout(() => {
+        modalRef.current?.focus();
+      }, 100);
     } else {
       document.body.style.overflow = "unset";
     }
@@ -76,6 +80,17 @@ export default function ApplicationModal({
     }, 300);
   };
 
+  function handleCloseKeydown(e: React.KeyboardEvent) {
+    if (e.key === "Escape") {
+      handleClose();
+    }
+  }
+
+  function handleCloseOutside(e: React.MouseEvent) {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  }
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const submitData = {
@@ -102,7 +117,13 @@ export default function ApplicationModal({
 
   return (
     <div
+      ref={modalRef}
       className={`modal-overlay ${isAnimating ? "modal-overlay--open" : ""}`}
+      onClick={handleCloseOutside}
+      onKeyDown={handleCloseKeydown}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
     >
       <div className={`modal ${isAnimating ? "modal--open" : ""}`}>
         <div className="modal__header">
