@@ -125,7 +125,6 @@ export default function Dashboard() {
 
   const handleModalSubmit = (data: any) => {
     console.log("New application data:", data);
-    // Aquí puedes conectar con tu ApplicationProvider cuando esté listo
   };
 
   const getApplicationsByStatus = (status: string) => {
