@@ -1,18 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiBookmark, FiSend, FiClock, FiCheckCircle } from "react-icons/fi";
 import "./page.css";
 import Sidebar from "./components/Sidebar";
 import ApplicationModal from "./components/ApplicationModal";
 import { useContext } from "react";
-import { AuthContext } from "@/contexts/AuthContext";
+import { Application, ApplicationStatus } from "@/types";
+import { ApplicationContext } from "@/contexts/ApplicationContext";
 
 const mockApplications = [
   {
     id: 1,
     company: "Google",
     position: "Frontend Developer",
-    status: "Saved",
+    status: ApplicationStatus.SAVED,
     dateApplied: "2024-03-12",
     salary: "$120,000",
     location: "San Francisco, CA",
@@ -21,7 +22,7 @@ const mockApplications = [
     id: 2,
     company: "Microsoft",
     position: "Full Stack Developer",
-    status: "Applied",
+    status: ApplicationStatus.APPLIED,
     dateApplied: "2024-03-10",
     salary: "$115,000",
     location: "Seattle, WA",
@@ -30,7 +31,7 @@ const mockApplications = [
     id: 3,
     company: "Netflix",
     position: "React Developer",
-    status: "In Progress",
+    status: ApplicationStatus.INTERVIEWING,
     dateApplied: "2024-03-08",
     salary: "$130,000",
     location: "Los Angeles, CA",
@@ -39,7 +40,7 @@ const mockApplications = [
     id: 4,
     company: "Uber",
     position: "Software Engineer",
-    status: "Closed",
+    status: ApplicationStatus.OFFER,
     dateApplied: "2024-03-01",
     salary: "$125,000",
     location: "San Francisco, CA",
@@ -48,7 +49,7 @@ const mockApplications = [
     id: 5,
     company: "Airbnb",
     position: "Frontend Engineer",
-    status: "Applied",
+    status: ApplicationStatus.APPLIED,
     dateApplied: "2024-02-28",
     salary: "$118,000",
     location: "San Francisco, CA",
@@ -57,7 +58,7 @@ const mockApplications = [
     id: 6,
     company: "Tesla",
     position: "Software Engineer",
-    status: "In Progress",
+    status: ApplicationStatus.INTERVIEWING,
     dateApplied: "2024-02-25",
     salary: "$140,000",
     location: "Austin, TX",
@@ -66,7 +67,7 @@ const mockApplications = [
     id: 7,
     company: "Apple",
     position: "iOS Developer",
-    status: "Closed",
+    status: ApplicationStatus.REJECTED,
     dateApplied: "2024-02-20",
     salary: "$135,000",
     location: "Cupertino, CA",
@@ -75,7 +76,7 @@ const mockApplications = [
     id: 8,
     company: "Meta",
     position: "Frontend Engineer",
-    status: "Saved",
+    status: ApplicationStatus.SAVED,
     dateApplied: "2024-02-18",
     salary: "$145,000",
     location: "Menlo Park, CA",
@@ -86,36 +87,42 @@ const kanbanColumns = [
   {
     id: "saved",
     title: "Saved",
-    status: "Saved",
+    statuses: [ApplicationStatus.SAVED],
     color: "gray",
     icon: FiBookmark,
   },
   {
     id: "applied",
     title: "Applied",
-    status: "Applied",
+    statuses: [ApplicationStatus.APPLIED],
     color: "blue",
     icon: FiSend,
   },
   {
     id: "inprogress",
     title: "In Progress",
-    status: "In Progress",
+    statuses: [ApplicationStatus.INTERVIEWING, ApplicationStatus.OFFER],
     color: "orange",
     icon: FiClock,
   },
   {
     id: "closed",
     title: "Closed",
-    status: "Closed",
+    statuses: [
+      ApplicationStatus.REJECTED,
+      ApplicationStatus.ACCEPTED,
+      ApplicationStatus.WITHDRAWN,
+      ApplicationStatus.GHOSTED,
+    ],
     color: "green",
     icon: FiCheckCircle,
   },
 ];
 
 export default function Dashboard() {
+  const { applications, addApplication, editApplication } =
+    useContext(ApplicationContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAuthenticated } = useContext(AuthContext);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -125,27 +132,53 @@ export default function Dashboard() {
     setIsModalOpen(false);
   };
 
-  const handleModalSubmit = (data: any) => {
-    console.log("New application data:", data);
+  const handleModalSubmit = (data: Application) => {
+    addApplication(data);
   };
 
-  const getApplicationsByStatus = (status: string) => {
-    return mockApplications.filter((app) => app.status === status);
+  const getApplicationsByStatuses = (statuses: ApplicationStatus[]) => {
+    if (!Array.isArray(applications)) {
+      return [];
+    }
+    return applications.filter((app) => statuses.includes(app.status));
   };
 
-  const getStatusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "saved":
+  const getStatusDisplayName = (status: ApplicationStatus) => {
+    switch (status) {
+      case ApplicationStatus.SAVED:
+        return "Saved";
+      case ApplicationStatus.APPLIED:
+        return "Applied";
+      case ApplicationStatus.INTERVIEWING:
+        return "Interviewing";
+      case ApplicationStatus.OFFER:
+        return "Offer";
+      case ApplicationStatus.REJECTED:
+        return "Rejected";
+      case ApplicationStatus.ACCEPTED:
+        return "Accepted";
+      case ApplicationStatus.WITHDRAWN:
+        return "Withdrawn";
+      case ApplicationStatus.GHOSTED:
+        return "Ghosted";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const getStatusClass = (status: ApplicationStatus) => {
+    switch (status) {
+      case ApplicationStatus.SAVED:
         return "status-saved";
-      case "applied":
+      case ApplicationStatus.APPLIED:
         return "status-applied";
-      case "interviewing":
+      case ApplicationStatus.INTERVIEWING:
         return "status-interviewing";
-      case "offer":
+      case ApplicationStatus.OFFER:
         return "status-offer";
-      case "rejected":
+      case ApplicationStatus.REJECTED:
         return "status-rejected";
-      case "ghosted":
+      case ApplicationStatus.GHOSTED:
         return "status-ghosted";
       default:
         return "status-applied";
@@ -167,18 +200,32 @@ export default function Dashboard() {
         {/* Stats Overview */}
         <div className="dashboard__stats">
           <div className="stat-card">
-            <div className="stat-number">{mockApplications.length}</div>
+            <div className="stat-number">
+              {Array.isArray(applications) ? applications.length : 0}
+            </div>
             <div className="stat-label">Total Applications</div>
           </div>
           <div className="stat-card">
             <div className="stat-number">
-              {getApplicationsByStatus("In Progress").length}
+              {
+                getApplicationsByStatuses([
+                  ApplicationStatus.INTERVIEWING,
+                  ApplicationStatus.OFFER,
+                ]).length
+              }
             </div>
             <div className="stat-label">In Progress</div>
           </div>
           <div className="stat-card">
             <div className="stat-number">
-              {getApplicationsByStatus("Closed").length}
+              {
+                getApplicationsByStatuses([
+                  ApplicationStatus.REJECTED,
+                  ApplicationStatus.ACCEPTED,
+                  ApplicationStatus.WITHDRAWN,
+                  ApplicationStatus.GHOSTED,
+                ]).length
+              }
             </div>
             <div className="stat-label">Closed Applications</div>
           </div>
@@ -210,12 +257,12 @@ export default function Dashboard() {
                     <h3 className="kanban-column-title">{column.title}</h3>
                   </div>
                   <span className="kanban-column-count">
-                    {getApplicationsByStatus(column.status).length}
+                    {getApplicationsByStatuses(column.statuses).length}
                   </span>
                 </div>
 
                 <div className="kanban-cards">
-                  {getApplicationsByStatus(column.status).map((app) => (
+                  {getApplicationsByStatuses(column.statuses).map((app) => (
                     <div
                       key={app.id}
                       className={`kanban-card ${getStatusClass(app.status)}`}
@@ -228,6 +275,16 @@ export default function Dashboard() {
                       </div>
 
                       <p className="card-position">{app.position}</p>
+                      <div className="card-status">
+                        <span className="status-label">Status:</span>
+                        <span
+                          className={`status-badge ${getStatusClass(
+                            app.status,
+                          )}`}
+                        >
+                          {getStatusDisplayName(app.status)}
+                        </span>
+                      </div>
 
                       <div className="card-details">
                         <div className="detail-item">
@@ -240,7 +297,7 @@ export default function Dashboard() {
                         </div>
                         <div className="detail-item">
                           <span className="detail-icon">📅</span>
-                          <span className="detail-text">{app.dateApplied}</span>
+                          <span className="detail-text">{app.appliedAt}</span>
                         </div>
                       </div>
 

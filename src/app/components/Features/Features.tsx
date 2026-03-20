@@ -28,7 +28,7 @@ export default function Features() {
           </h2>
           <p className="features__ctn-p">
             Store job links, notes, contacts, and follow-ups in one structured
-            view. Everything you need for each role — organized and accessible.
+            view. Everything you need for each role organized and accessible.
           </p>
         </div>
       </div>

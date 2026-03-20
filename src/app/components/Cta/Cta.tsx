@@ -12,7 +12,7 @@ export default function Cta() {
           applications smarter.
         </p>
         <div className="cta__btn-container">
-          <button className="cta__btn cta__btn-primary">Iniciar Ahora</button>
+          <button className="cta__btn cta__btn-primary">Start Now</button>
         </div>
       </div>
     </section>

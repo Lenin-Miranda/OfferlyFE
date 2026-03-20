@@ -128,6 +128,17 @@
   font-family: inherit;
 }
 
+.modal__form-select {
+  padding-right: 40px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath fill='%23666' d='M1.4 0L6 4.6L10.6 0L12 1.4L6 7.4L0 1.4L1.4 0Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
 .modal__form-input:focus,
 .modal__form-select:focus {
   outline: none;

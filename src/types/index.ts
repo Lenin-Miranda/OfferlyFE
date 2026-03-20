@@ -13,6 +13,14 @@ export interface AuthContextType {
   logout: () => Promise<void>;
 }
 
+export interface ApplicationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: any) => void;
+  initialData?: any;
+  mode?: "create" | "edit";
+}
+
 export interface ApplicationContextType {
   applications: Application[];
   addApplication: (
@@ -42,7 +50,7 @@ export interface Application {
   jobUrl?: string;
   description?: string;
   notes?: string;
-  appliedAt?: string; // Opcional si no siempre tienes fecha exacta
+  appliedAt?: string;
   createdAt: string;
   updatedAt: string;
 }

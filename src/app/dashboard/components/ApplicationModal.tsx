@@ -11,14 +11,7 @@ import {
   FiMessageSquare,
 } from "react-icons/fi";
 import "./ApplicationModal.css";
-
-interface ApplicationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: any) => void;
-  initialData?: any;
-  mode?: "create" | "edit";
-}
+import { ApplicationModalProps, Application } from "@/types";
 
 export default function ApplicationModal({
   isOpen,
@@ -91,6 +84,7 @@ export default function ApplicationModal({
       handleClose();
     }
   }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const submitData = {

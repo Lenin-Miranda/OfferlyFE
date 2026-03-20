@@ -13,10 +13,10 @@ import {
 } from "react-icons/fi";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: FiHome },
+  { label: "Home", href: "/", icon: FiHome },
+  { label: "Dashboard", href: "/dashboard", icon: FiBarChart2 },
   { label: "Applications", href: "/dashboard/applications", icon: FiBriefcase },
   { label: "Saved Jobs", href: "/dashboard/saved", icon: FiBookmark },
-  { label: "Analytics", href: "/dashboard/analytics", icon: FiBarChart2 },
   { label: "Profile", href: "/dashboard/profile", icon: FiUser },
   { label: "Settings", href: "/dashboard/settings", icon: FiSettings },
 ];

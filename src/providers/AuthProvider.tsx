@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { login, register, logout, checkAuth } from "@/lib/auth";
 import { AuthContext } from "@/contexts/AuthContext";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     // Check authentication status on component mount
@@ -35,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const handleLogout = async () => {
     await logout();
     setIsAuthenticated(false);
+    router.push("/login");
   };
 
   return (
