@@ -134,142 +134,144 @@ export default function ApplicationModal({
         </div>
 
         <form onSubmit={handleSubmit} className="modal__form">
-          <div className="modal__form-row">
+          <div className="modal__form-container">
+            <div className="modal__form-row">
+              <label className="modal__form-label">
+                <FiBriefcase className="modal__form-icon" />
+                Company *
+                <input
+                  type="text"
+                  name="company"
+                  value={formData.company}
+                  onChange={handleInputChange}
+                  className="modal__form-input"
+                  required
+                  placeholder="e.g., Google, Microsoft"
+                />
+              </label>
+
+              <label className="modal__form-label">
+                <FiBriefcase className="modal__form-icon" />
+                Position *
+                <input
+                  type="text"
+                  name="position"
+                  value={formData.position}
+                  onChange={handleInputChange}
+                  className="modal__form-input"
+                  required
+                  placeholder="e.g., Frontend Developer"
+                />
+              </label>
+            </div>
+
+            <div className="modal__form-row">
+              <label className="modal__form-label">
+                Status *
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                  className="modal__form-select"
+                  required
+                >
+                  <option value={ApplicationStatus.SAVED}>Saved</option>
+                  <option value={ApplicationStatus.APPLIED}>Applied</option>
+                  <option value={ApplicationStatus.INTERVIEWING}>
+                    Interviewing
+                  </option>
+                  <option value={ApplicationStatus.OFFER}>Offer</option>
+                  <option value={ApplicationStatus.REJECTED}>Rejected</option>
+                  <option value={ApplicationStatus.ACCEPTED}>Accepted</option>
+                  <option value={ApplicationStatus.WITHDRAWN}>Withdrawn</option>
+                  <option value={ApplicationStatus.GHOSTED}>Ghosted</option>
+                </select>
+              </label>
+
+              <label className="modal__form-label">
+                <FiMapPin className="modal__form-icon" />
+                Location
+                <input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  className="modal__form-input"
+                  placeholder="e.g., San Francisco, CA"
+                />
+              </label>
+            </div>
+
+            <div className="modal__form-row">
+              <label className="modal__form-label">
+                <FiDollarSign className="modal__form-icon" />
+                Salary
+                <input
+                  type="number"
+                  name="salary"
+                  value={formData.salary}
+                  onChange={handleInputChange}
+                  className="modal__form-input"
+                  placeholder="120000"
+                />
+              </label>
+
+              <label className="modal__form-label">
+                Currency
+                <select
+                  name="currency"
+                  value={formData.currency}
+                  onChange={handleInputChange}
+                  className="modal__form-select"
+                >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="CAD">CAD</option>
+                  <option value="MXN">MXN</option>
+                </select>
+              </label>
+            </div>
+
             <label className="modal__form-label">
-              <FiBriefcase className="modal__form-icon" />
-              Company *
+              <FiLink className="modal__form-icon" />
+              Job URL
               <input
-                type="text"
-                name="company"
-                value={formData.company}
+                type="url"
+                name="jobUrl"
+                value={formData.jobUrl}
                 onChange={handleInputChange}
                 className="modal__form-input"
-                required
-                placeholder="e.g., Google, Microsoft"
+                placeholder="https://..."
               />
             </label>
 
             <label className="modal__form-label">
-              <FiBriefcase className="modal__form-icon" />
-              Position *
-              <input
-                type="text"
-                name="position"
-                value={formData.position}
+              <FiFileText className="modal__form-icon" />
+              Description
+              <textarea
+                name="description"
+                value={formData.description}
                 onChange={handleInputChange}
-                className="modal__form-input"
-                required
-                placeholder="e.g., Frontend Developer"
+                className="modal__form-textarea"
+                rows={3}
+                placeholder="Job description, requirements, etc."
+              />
+            </label>
+
+            <label className="modal__form-label">
+              <FiMessageSquare className="modal__form-icon" />
+              Notes
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={handleInputChange}
+                className="modal__form-textarea"
+                rows={3}
+                placeholder="Personal notes, interview experience, etc."
               />
             </label>
           </div>
-
-          <div className="modal__form-row">
-            <label className="modal__form-label">
-              Status *
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                className="modal__form-select"
-                required
-              >
-                <option value={ApplicationStatus.SAVED}>Saved</option>
-                <option value={ApplicationStatus.APPLIED}>Applied</option>
-                <option value={ApplicationStatus.INTERVIEWING}>
-                  Interviewing
-                </option>
-                <option value={ApplicationStatus.OFFER}>Offer</option>
-                <option value={ApplicationStatus.REJECTED}>Rejected</option>
-                <option value={ApplicationStatus.ACCEPTED}>Accepted</option>
-                <option value={ApplicationStatus.WITHDRAWN}>Withdrawn</option>
-                <option value={ApplicationStatus.GHOSTED}>Ghosted</option>
-              </select>
-            </label>
-
-            <label className="modal__form-label">
-              <FiMapPin className="modal__form-icon" />
-              Location
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                className="modal__form-input"
-                placeholder="e.g., San Francisco, CA"
-              />
-            </label>
-          </div>
-
-          <div className="modal__form-row">
-            <label className="modal__form-label">
-              <FiDollarSign className="modal__form-icon" />
-              Salary
-              <input
-                type="number"
-                name="salary"
-                value={formData.salary}
-                onChange={handleInputChange}
-                className="modal__form-input"
-                placeholder="120000"
-              />
-            </label>
-
-            <label className="modal__form-label">
-              Currency
-              <select
-                name="currency"
-                value={formData.currency}
-                onChange={handleInputChange}
-                className="modal__form-select"
-              >
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="CAD">CAD</option>
-                <option value="MXN">MXN</option>
-              </select>
-            </label>
-          </div>
-
-          <label className="modal__form-label">
-            <FiLink className="modal__form-icon" />
-            Job URL
-            <input
-              type="url"
-              name="jobUrl"
-              value={formData.jobUrl}
-              onChange={handleInputChange}
-              className="modal__form-input"
-              placeholder="https://..."
-            />
-          </label>
-
-          <label className="modal__form-label">
-            <FiFileText className="modal__form-icon" />
-            Description
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className="modal__form-textarea"
-              rows={3}
-              placeholder="Job description, requirements, etc."
-            />
-          </label>
-
-          <label className="modal__form-label">
-            <FiMessageSquare className="modal__form-icon" />
-            Notes
-            <textarea
-              name="notes"
-              value={formData.notes}
-              onChange={handleInputChange}
-              className="modal__form-textarea"
-              rows={3}
-              placeholder="Personal notes, interview experience, etc."
-            />
-          </label>
 
           <div className="modal__form-actions">
             <button
