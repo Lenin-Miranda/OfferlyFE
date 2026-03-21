@@ -14,8 +14,6 @@ export function ApplicationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [selectedApplication, setSelectedApplication] =
-    useState<Application | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
 
   useEffect(() => {

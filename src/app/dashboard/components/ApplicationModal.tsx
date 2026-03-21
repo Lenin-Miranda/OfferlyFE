@@ -9,9 +9,10 @@ import {
   FiLink,
   FiFileText,
   FiMessageSquare,
+  FiCalendar,
 } from "react-icons/fi";
 import "./ApplicationModal.css";
-import { ApplicationModalProps, Application } from "@/types";
+import { ApplicationModalProps } from "@/types";
 
 export default function ApplicationModal({
   isOpen,
@@ -31,6 +32,7 @@ export default function ApplicationModal({
     currency: "USD",
     jobUrl: "",
     description: "",
+    appliedAt: "",
     notes: "",
   });
 
@@ -58,6 +60,9 @@ export default function ApplicationModal({
         status: initialData.status || ApplicationStatus.SAVED,
         location: initialData.location || "",
         salary: initialData.salary ? String(initialData.salary) : "",
+        appliedAt: initialData.appliedAt
+          ? new Date(initialData.appliedAt).toISOString().split("T")[0]
+          : "",
         currency: initialData.currency || "USD",
         jobUrl: initialData.jobUrl || "",
         description: initialData.description || "",
@@ -90,6 +95,7 @@ export default function ApplicationModal({
     const submitData = {
       ...formData,
       salary: formData.salary ? Number(formData.salary) : undefined,
+      appliedAt: formData.appliedAt ? new Date(formData.appliedAt) : undefined,
     };
     onSubmit(submitData);
     handleClose();
@@ -213,6 +219,18 @@ export default function ApplicationModal({
                   onChange={handleInputChange}
                   className="modal__form-input"
                   placeholder="120000"
+                />
+              </label>
+
+              <label className="modal__form-label">
+                <FiCalendar className="modal__form-icon" />
+                Date Applied
+                <input
+                  type="date"
+                  name="appliedAt"
+                  value={formData.appliedAt}
+                  onChange={handleInputChange}
+                  className="modal__form-input"
                 />
               </label>
 

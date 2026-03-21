@@ -40,6 +40,7 @@ export interface ApplicationContextType {
 
 export interface Application {
   id: string;
+  _id?: string; // MongoDB _id del backend
   userId: string;
   company: string;
   position: string;
