@@ -1,0 +1,199 @@
+/* Confirmation Message Overlay */
+.confirm__message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.confirm__message--hidden {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Confirmation Container */
+.confirm__ctn {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.confirm__message--hidden .confirm__ctn {
+  transform: scale(0.95);
+}
+
+.confirm__message .confirm__ctn {
+  transform: scale(1);
+}
+
+/* Confirmation Text */
+.confirm__text {
+  font-size: 16px;
+  color: #374151;
+  margin-bottom: 24px;
+  text-align: center;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Button Container */
+.confirm__btn-ctn {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Base Button Styles */
+.confirm__btn,
+.deny__btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cancel Button */
+.deny__btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.deny__btn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.deny__btn:active {
+  transform: translateY(0);
+}
+
+/* Confirm Button */
+.confirm__btn {
+  background: #dc2626;
+  color: white;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+.confirm__btn:hover {
+  background: #b91c1c;
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+  transform: translateY(-1px);
+}
+
+.confirm__btn:active {
+  transform: translateY(0);
+}
+
+/* Edit Mode Styles */
+.confirm__message[data-mode="edit"] .confirm__btn {
+  background: #2563eb;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.confirm__message[data-mode="edit"] .confirm__btn:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+/* Loading State */
+.confirm__btn:disabled,
+.deny__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.confirm__btn:disabled:hover,
+.deny__btn:disabled:hover {
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .confirm__ctn {
+    width: 95%;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .confirm__text {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .confirm__btn-ctn {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .confirm__btn,
+  .deny__btn {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+/* Animation for smooth entrance */
+@keyframes confirmationFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes confirmationFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.confirm__message {
+  animation: confirmationFadeIn 0.3s ease-out;
+}
+
+.confirm__message--closing {
+  animation: confirmationFadeOut 0.3s ease-out;
+}

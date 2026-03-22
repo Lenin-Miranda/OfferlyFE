@@ -13,6 +13,7 @@ import "./page.css";
 import Sidebar from "./components/Sidebar";
 import ApplicationModal from "./components/ApplicationModal";
 import MessageNotification from "./components/MessageNotification";
+import ConfirmationMessage from "./components/ConfirmationMessage";
 import { useContext } from "react";
 import { Application, ApplicationStatus } from "@/types";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
@@ -63,6 +64,11 @@ export default function Dashboard() {
     setMessageType,
   } = useContext(ApplicationContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
+  const [selectedAppForDelete, setSelectedAppForDelete] = useState<{
+    id: string;
+    company: string;
+  } | null>(null);
 
   useEffect(() => {
     if (isMessage) {
@@ -79,6 +85,16 @@ export default function Dashboard() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleDeleteClick = (appId: string, companyName: string) => {
+    setSelectedAppForDelete({ id: appId, company: companyName });
+    setIsMessageOpen(true);
+  };
+
+  const handleCloseConfirmation = () => {
+    setIsMessageOpen(false);
+    setSelectedAppForDelete(null);
   };
 
   const handleModalSubmit = (data: Application) => {
@@ -270,7 +286,14 @@ export default function Dashboard() {
 
                       <div className="card-actions">
                         <button className="btn-edit">Edit</button>
-                        <button className="btn-delete">Delete</button>
+                        <button
+                          className="btn-delete"
+                          onClick={() =>
+                            handleDeleteClick(app._id || app.id, app.company)
+                          }
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -294,6 +317,18 @@ export default function Dashboard() {
           message={isMessage}
           type={messageType}
           onClose={() => setIsMessage("")}
+        />
+      )}
+
+      {/* Confirmation Message */}
+      {selectedAppForDelete && (
+        <ConfirmationMessage
+          message={`Are you sure you want to delete the application for ${selectedAppForDelete.company}? This action cannot be undone.`}
+          isOpen={isMessageOpen}
+          onClose={handleCloseConfirmation}
+          mode="delete"
+          id={selectedAppForDelete.id}
+          changes={{}}
         />
       )}
     </>
