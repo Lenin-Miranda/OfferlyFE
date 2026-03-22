@@ -13,4 +13,8 @@ export const ApplicationContext = createContext<ApplicationContextType>({
   editApplication: async () => {
     throw new Error("ApplicationProvider not found");
   },
+  isMessage: "",
+  setIsMessage: () => {},
+  messageType: "info",
+  setMessageType: () => {},
 });

@@ -1,12 +1,7 @@
 "use client";
 import { FiCheckCircle, FiAlertCircle, FiInfo } from "react-icons/fi";
 import "./MessageNotification.css";
-
-interface MessageNotificationProps {
-  message: string;
-  type?: "success" | "error" | "info";
-  onClose?: () => void;
-}
+import { MessageNotificationProps } from "@/types";
 
 export default function MessageNotification({
   message,

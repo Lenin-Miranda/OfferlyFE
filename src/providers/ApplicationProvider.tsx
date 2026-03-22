@@ -15,6 +15,10 @@ export function ApplicationProvider({
   children: React.ReactNode;
 }) {
   const [applications, setApplications] = useState<Application[]>([]);
+  const [isMessage, setIsMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "info">(
+    "info",
+  );
 
   useEffect(() => {
     handleApplications();
@@ -78,6 +82,10 @@ export function ApplicationProvider({
     addApplication: handleAddApplication,
     deleteApplication: handleDeleteApplication,
     editApplication: handleEditApplication,
+    isMessage,
+    setIsMessage,
+    messageType,
+    setMessageType,
   };
 
   return (

@@ -36,11 +36,15 @@ export interface ApplicationContextType {
       Omit<Application, "id" | "userId" | "createdAt" | "updatedAt">
     >,
   ) => Promise<Application>;
+  isMessage: string;
+  setIsMessage: (message: string) => void;
+  messageType: "success" | "error" | "info";
+  setMessageType: (type: "success" | "error" | "info") => void;
 }
 
 export interface Application {
   id: string;
-  _id?: string; // MongoDB _id del backend
+  _id?: string;
   userId: string;
   company: string;
   position: string;
@@ -75,4 +79,10 @@ export interface ApiResponse<T> {
 export interface ApiError {
   message: string;
   errors?: Record<string, string[]>;
+}
+
+export interface MessageNotificationProps {
+  message: string;
+  type?: "success" | "error" | "info";
+  onClose?: () => void;
 }

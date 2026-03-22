@@ -1,6 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FiBookmark, FiSend, FiClock, FiCheckCircle } from "react-icons/fi";
+import {
+  FiBookmark,
+  FiSend,
+  FiClock,
+  FiCheckCircle,
+  FiMapPin,
+  FiDollarSign,
+  FiCalendar,
+} from "react-icons/fi";
 import "./page.css";
 import Sidebar from "./components/Sidebar";
 import ApplicationModal from "./components/ApplicationModal";
@@ -46,13 +54,15 @@ const kanbanColumns = [
 ];
 
 export default function Dashboard() {
-  const { applications, addApplication, editApplication } =
-    useContext(ApplicationContext);
+  const {
+    applications,
+    addApplication,
+    isMessage,
+    setIsMessage,
+    messageType,
+    setMessageType,
+  } = useContext(ApplicationContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMessage, setIsMessage] = useState("");
-  const [messageType, setMessageType] = useState<"success" | "error" | "info">(
-    "info",
-  );
 
   useEffect(() => {
     if (isMessage) {
@@ -83,8 +93,6 @@ export default function Dashboard() {
     setMessageType("success");
     setIsMessage("Application added successfully!");
   };
-
-  console.log("Applications in Dashboard:", applications);
 
   const getApplicationsByStatuses = (statuses: ApplicationStatus[]) => {
     return applications.filter((app) => statuses.includes(app.status));
@@ -157,9 +165,6 @@ export default function Dashboard() {
             Organize and track your job applications efficiently
           </p>
         </div>
-        {/* Stats Overview */}Each child in a list should have a unique "key"
-        prop. Check the render method of `Dashboard`. See
-        https://react.dev/link/warning-keys for more information.
         <div className="dashboard__stats">
           <div className="stat-card">
             <div className="stat-number">
@@ -248,15 +253,15 @@ export default function Dashboard() {
 
                       <div className="card-details">
                         <div className="detail-item">
-                          <span className="detail-icon">📍</span>
+                          <FiMapPin className="detail-icon" />
                           <span className="detail-text">{app.location}</span>
                         </div>
                         <div className="detail-item">
-                          <span className="detail-icon">💰</span>
+                          <FiDollarSign className="detail-icon" />
                           <span className="detail-text">{app.salary}</span>
                         </div>
                         <div className="detail-item">
-                          <span className="detail-icon">📅</span>
+                          <FiCalendar className="detail-icon" />
                           <span className="detail-text">
                             {formatDate(app.appliedAt)}
                           </span>
@@ -265,7 +270,7 @@ export default function Dashboard() {
 
                       <div className="card-actions">
                         <button className="btn-edit">Edit</button>
-                        <button className="btn-view">View Details</button>
+                        <button className="btn-delete">Delete</button>
                       </div>
                     </div>
                   ))}
