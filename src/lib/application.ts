@@ -9,7 +9,7 @@ export const getApplications = async (): Promise<Application[]> => {
       id: app._id,
     }));
   } catch (e) {
-    console.error(`Error Getting applications: ${e}`);
+    console.error(`Error Getting applications:`, e);
     return [];
   }
 };
@@ -49,7 +49,7 @@ export async function editApplication(
     const res = await api.patch(`/applications/${id}`, updates);
     return res.data.app;
   } catch (e) {
-    console.error("Error updating info", e);
+    console.error("Error updating info:", e);
     throw new Error();
   }
 }

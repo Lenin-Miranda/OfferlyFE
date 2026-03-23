@@ -66,9 +66,10 @@ export function ApplicationProvider({
     >,
   ): Promise<Application> => {
     try {
+      console.log('ApplicationProvider: Editing application with id:', id);
       const updatedApplication = await editApplication(id, updates);
       setApplications((prev) =>
-        prev.map((app) => (app.id === id ? updatedApplication : app)),
+        prev.map((app) => (app._id === id || app.id === id ? updatedApplication : app)),
       );
       return updatedApplication;
     } catch (e) {

@@ -72,7 +72,6 @@ export default function ConfirmationMessage({
       }
       handleClose();
     } catch (e) {
-      console.error("Error Message:", e);
       setMessageType("error");
       setIsMessage("An error occurred. Please try again.");
     } finally {

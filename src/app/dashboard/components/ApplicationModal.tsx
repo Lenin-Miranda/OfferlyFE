@@ -94,6 +94,10 @@ export default function ApplicationModal({
     e.preventDefault();
     const submitData = {
       ...formData,
+      ...(mode === "edit" &&
+        initialData && {
+          _id: initialData._id || initialData.id,
+        }),
       salary: formData.salary ? Number(formData.salary) : undefined,
       appliedAt: formData.appliedAt ? new Date(formData.appliedAt) : undefined,
     };

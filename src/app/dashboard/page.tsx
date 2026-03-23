@@ -64,10 +64,15 @@ export default function Dashboard() {
     setMessageType,
   } = useContext(ApplicationContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingApp, setEditingApp] = useState<Application | null>(null);
   const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [selectedAppForDelete, setSelectedAppForDelete] = useState<{
     id: string;
     company: string;
+  } | null>(null);
+  const [editConfirmationData, setEditConfirmationData] = useState<{
+    isOpen: boolean;
+    appData: Application;
   } | null>(null);
 
   useEffect(() => {
@@ -80,11 +85,18 @@ export default function Dashboard() {
   }, [isMessage]);
 
   const handleOpenModal = () => {
+    setEditingApp(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditClick = (app: Application) => {
+    setEditingApp(app);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEditingApp(null);
   };
 
   const handleDeleteClick = (appId: string, companyName: string) => {
@@ -97,6 +109,10 @@ export default function Dashboard() {
     setSelectedAppForDelete(null);
   };
 
+  const handleCloseEditConfirmation = () => {
+    setEditConfirmationData(null);
+  };
+
   const handleModalSubmit = (data: Application) => {
     if (!data.company || !data.position || !data.status) {
       setMessageType("error");
@@ -105,9 +121,19 @@ export default function Dashboard() {
       );
       return;
     }
-    addApplication(data);
-    setMessageType("success");
-    setIsMessage("Application added successfully!");
+
+    if (editingApp) {
+      setEditConfirmationData({
+        isOpen: true,
+        appData: data,
+      });
+      setIsModalOpen(false);
+    } else {
+      addApplication(data);
+      setMessageType("success");
+      setIsMessage("Application added successfully!");
+      setIsModalOpen(false);
+    }
   };
 
   const getApplicationsByStatuses = (statuses: ApplicationStatus[]) => {
@@ -174,7 +200,6 @@ export default function Dashboard() {
     <>
       <Sidebar />
       <section className="dashboard">
-        {/* Header Section */}
         <div className="dashboard__header">
           <h1 className="dashboard__title">Job Application Tracker</h1>
           <p className="dashboard__subtitle">
@@ -213,7 +238,6 @@ export default function Dashboard() {
             <div className="stat-label">Closed Applications</div>
           </div>
         </div>
-        {/* Action Section */}
         <div className="dashboard__action">
           <div className="dashboard__button-ctn">
             <p className="dashboard__action-text">
@@ -225,7 +249,6 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-        {/* Kanban Board */}
         <div className="kanban-board">
           <h2 className="kanban-title">Application Status Board</h2>
 
@@ -285,7 +308,12 @@ export default function Dashboard() {
                       </div>
 
                       <div className="card-actions">
-                        <button className="btn-edit">Edit</button>
+                        <button
+                          className="btn-edit"
+                          onClick={() => handleEditClick(app)}
+                        >
+                          Edit
+                        </button>
                         <button
                           className="btn-delete"
                           onClick={() =>
@@ -308,10 +336,10 @@ export default function Dashboard() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSubmit={handleModalSubmit}
-        mode="create"
+        mode={editingApp ? "edit" : "create"}
+        initialData={editingApp}
       />
 
-      {/* Message Notifications */}
       {isMessage && (
         <MessageNotification
           message={isMessage}
@@ -320,7 +348,6 @@ export default function Dashboard() {
         />
       )}
 
-      {/* Confirmation Message */}
       {selectedAppForDelete && (
         <ConfirmationMessage
           message={`Are you sure you want to delete the application for ${selectedAppForDelete.company}? This action cannot be undone.`}
@@ -329,6 +356,17 @@ export default function Dashboard() {
           mode="delete"
           id={selectedAppForDelete.id}
           changes={{}}
+        />
+      )}
+
+      {editConfirmationData && (
+        <ConfirmationMessage
+          message={`Are you sure you want to update the application for ${editConfirmationData.appData.company}?`}
+          isOpen={editConfirmationData.isOpen}
+          onClose={handleCloseEditConfirmation}
+          mode="edit"
+          id={editConfirmationData.appData._id || editConfirmationData.appData.id || ""}
+          changes={editConfirmationData.appData}
         />
       )}
     </>
