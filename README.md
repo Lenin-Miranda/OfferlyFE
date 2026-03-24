@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OfferlyFE
 
-## Getting Started
+A web application to track and organize job applications efficiently.
 
-First, run the development server:
+## Description
+
+OfferlyFE is a frontend application built with Next.js that allows users to manage their job applications. Users can add, edit, delete, and organize their job applications in a Kanban-style board.
+
+## Features
+
+- Main dashboard with application statistics
+- Kanban system to organize applications by status
+- Modal for adding/editing job applications
+- Application states: Saved, Applied, In Progress, Closed
+- Confirmation for edit/delete actions
+- Success/error notifications
+- Responsive design
+- User authentication
+
+## Technologies
+
+- Next.js 16.1.6
+- React 19.2.3
+- TypeScript
+- React Query for state management
+- React Icons
+- AOS for animations
+- Axios for HTTP requests
+- Zustand for global state
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Lenin-Miranda/OfferlyFE.git
+cd OfferlyFE
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open http://localhost:3000 in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - Starts the development server
+- `npm run build` - Builds the app for production
+- `npm run start` - Starts the production application
+- `npm run lint` - Runs the linter
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── Components/     # Reusable components
+│   ├── dashboard/      # Main dashboard page
+│   └── login/          # Login page
+├── contexts/           # React contexts
+├── hooks/              # Custom hooks
+├── lib/                # Utils and configurations
+├── providers/          # Application providers
+├── stores/             # Global states
+├── types/              # TypeScript definitions
+└── utils/              # Utility functions
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Application States
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Saved**: Application saved to apply later
+- **Applied**: Application submitted
+- **Interviewing**: Interview process ongoing
+- **Offer**: Offer received
+- **Rejected**: Application rejected
+- **Accepted**: Offer accepted
+- **Withdrawn**: Application withdrawn
+- **Ghosted**: No response from employer
