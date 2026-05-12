@@ -1,11 +1,10 @@
-import Image from "next/image";
-import NavBar from "./Components/NavBar/NavBar";
+import NavBar from "./components/NavBar/NavBar";
 import styles from "./page.module.css";
-import Hero from "./Components/Hero/Hero";
-import Features from "./Components/Features/Features";
-import HowItWorks from "./Components/HowItWorks/HowItWorks";
-import Cta from "./Components/Cta/Cta";
-import Footer from "./Components/Footer/Footer";
+import Hero from "./components/Hero/Hero";
+import Features from "./components/Features/Features";
+import HowItWorks from "./components/HowItWorks/HowItWorks";
+import Cta from "./components/Cta/Cta";
+import Footer from "./components/Footer/Footer";
 
 export default function Home() {
   return (

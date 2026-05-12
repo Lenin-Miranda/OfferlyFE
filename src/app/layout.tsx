@@ -4,7 +4,8 @@ import QueryProvider from "@/providers/query-providers";
 import AosProvider from "@/providers/AosProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ApplicationProvider } from "@/providers/ApplicationProvider";
-import LogoutButton from "@/app/Components/LogoutButton/LogoutButton";
+import { ErrorProvider } from "@/providers/ErrorProvider";
+import LogoutButton from "@/app/components/LogoutButton/LogoutButton";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,12 +33,14 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           <ApplicationProvider>
-            <AosProvider>
-              <QueryProvider>
-                <LogoutButton />
-                {children}
-              </QueryProvider>
-            </AosProvider>
+            <ErrorProvider>
+              <AosProvider>
+                <QueryProvider>
+                  <LogoutButton />
+                  {children}
+                </QueryProvider>
+              </AosProvider>
+            </ErrorProvider>
           </ApplicationProvider>
         </AuthProvider>
       </body>

@@ -86,3 +86,5 @@ export interface MessageNotificationProps {
   type?: "success" | "error" | "info";
   onClose?: () => void;
 }
+
+export type { ErrorContextType, ErrorMessageProps } from "./errorTypes";

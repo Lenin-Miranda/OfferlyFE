@@ -5,8 +5,12 @@ import Link from "next/link";
 import logo from "../../../public/offerly-logo.svg";
 import Image from "next/image";
 import { AuthContext } from "@/contexts/AuthContext";
+import { ErrorContext } from "@/contexts/ErrorContext";
+import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
 export default function Login() {
   const { isAuthenticated, login, register } = useContext(AuthContext);
+  const { errorMessage, setErrorMessage, isOpen, setIsOpen } =
+    useContext(ErrorContext);
   const [isRegister, setIsRegister] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isMessage, setIsMessage] = useState("");
@@ -51,6 +55,8 @@ export default function Login() {
     } catch (e) {
       console.error(`Error Message:`, e);
       setIsError(true);
+      setErrorMessage("An error occurred. Please try again.");
+      setIsOpen(true);
     }
   }
 
@@ -142,6 +148,7 @@ export default function Login() {
           </button>
         </div>
       </form>
+      {isOpen && <ErrorMessage message={errorMessage} />}
       <div className="login__ctn">
         <h2
           className={!isRegister ? "login__ctn-title" : "login__ctn-title-hide"}

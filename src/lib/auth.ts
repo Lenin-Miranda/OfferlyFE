@@ -14,6 +14,7 @@ export async function login(email: string, password: string) {
     await api.post("/auth/login", { email, password });
   } catch (error) {
     console.error("Login failed", error);
+    throw error;
   }
 }
 
@@ -22,6 +23,7 @@ export async function register(name: string, email: string, password: string) {
     await api.post("/auth/register", { name, email, password });
   } catch (e) {
     console.error("Register failed", e);
+    throw e;
   }
 }
 
