@@ -36,7 +36,6 @@
       rgba(180, 220, 255, 0.5),
       transparent 80%
     );
-  filter: blur(60px);
   transform: translateZ(0);
   animation: gradientShift 5s ease-in-out infinite;
 }
@@ -44,15 +43,15 @@
 @keyframes gradientShift {
   0% {
     opacity: 1;
-    filter: blur(60px) hue-rotate(0deg);
+    filter: hue-rotate(0deg);
   }
   50% {
     opacity: 0.8;
-    filter: blur(80px) hue-rotate(30deg);
+    filter: hue-rotate(30deg);
   }
   100% {
     opacity: 1;
-    filter: blur(60px) hue-rotate(0deg);
+    filter: hue-rotate(0deg);
   }
 }
 

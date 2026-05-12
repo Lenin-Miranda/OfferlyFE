@@ -129,7 +129,6 @@
       rgba(254, 243, 208, 0.06),
       transparent 65%
     );
-  filter: blur(40px);
   animation: bg-float-slow 10s ease-in-out infinite;
 }
 

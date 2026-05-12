@@ -78,7 +78,6 @@
   z-index: -1;
   animation: gradient-shift 5s ease infinite,
     border-pulse 4s ease-in-out infinite;
-  filter: blur(8px);
 }
 
 .cta__btn-primary:hover {
@@ -91,7 +90,6 @@
 .cta__btn-primary:hover::before {
   animation: gradient-shift 2.5s ease infinite,
     border-pulse 2s ease-in-out infinite;
-  filter: blur(12px);
 }
 
 /* Background con gradientes */
@@ -115,7 +113,6 @@
       rgba(255, 225, 238, 0.3),
       transparent 75%
     );
-  filter: blur(60px);
   animation: bg-float 8s ease-in-out infinite;
 }
 

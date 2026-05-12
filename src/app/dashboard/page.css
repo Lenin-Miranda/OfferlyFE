@@ -48,11 +48,11 @@
   0%,
   100% {
     opacity: 1;
-    filter: blur(60px) hue-rotate(0deg);
+    filter: hue-rotate(0deg);
   }
   50% {
     opacity: 0.8;
-    filter: blur(80px) hue-rotate(30deg);
+    filter: hue-rotate(30deg);
   }
 }
 
@@ -94,7 +94,6 @@
 
 .stat-card {
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   padding: 24px;
@@ -149,7 +148,6 @@
   flex-direction: column;
   gap: 16px;
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 24px;
   border-radius: 16px;
@@ -208,7 +206,6 @@
     rgba(255, 255, 255, 0.95) 0%,
     rgba(255, 255, 255, 0.85) 100%
   );
-  backdrop-filter: blur(10px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -283,7 +280,6 @@
 
 .kanban-column {
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   padding: 16px;
