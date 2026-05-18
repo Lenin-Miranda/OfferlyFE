@@ -5,15 +5,9 @@
   flex-direction: column;
   gap: 20px;
   min-height: 100%;
-  padding: 28px;
-  border-radius: 28px;
-  background: linear-gradient(
-    180deg,
-    rgba(17, 24, 39, 0.92) 0%,
-    rgba(30, 41, 59, 0.86) 100%
-  );
-  color: #f8fafc;
-  box-shadow: 0 30px 80px rgba(11, 18, 32, 0.2);
+  padding: 24px 0 0;
+  color: #111827;
+  border-top: 1px solid rgba(17, 24, 39, 0.1);
 }
 
 .resume-tailor-result__loading,
@@ -39,7 +33,7 @@
 .resume-tailor-result__empty p {
   max-width: 540px;
   margin: 0;
-  color: rgba(248, 250, 252, 0.72);
+  color: rgba(17, 24, 39, 0.64);
   line-height: 1.7;
 }
 
@@ -50,8 +44,7 @@
   justify-content: center;
   width: 74px;
   height: 74px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(17, 24, 39, 0.06);
 }
 
 .resume-tailor-result__loading-icon svg,
@@ -74,9 +67,8 @@
 
 .resume-tailor-result__loading-steps span {
   padding: 12px 16px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(248, 250, 252, 0.92);
+  background: rgba(17, 24, 39, 0.04);
+  color: rgba(17, 24, 39, 0.82);
 }
 
 .resume-tailor-result__hero {
@@ -89,10 +81,10 @@
 .resume-tailor-result__eyebrow {
   display: inline-flex;
   margin-bottom: 10px;
-  padding: 7px 11px;
+  padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(248, 250, 252, 0.85);
+  background: rgba(17, 24, 39, 0.06);
+  color: rgba(17, 24, 39, 0.72);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -107,7 +99,7 @@
 
 .resume-tailor-result__summary {
   margin: 12px 0 0;
-  color: rgba(248, 250, 252, 0.78);
+  color: rgba(17, 24, 39, 0.7);
   line-height: 1.7;
 }
 
@@ -125,12 +117,12 @@
   gap: 10px;
   min-height: 48px;
   padding: 0 18px;
-  border-radius: 16px;
+  border-radius: 999px;
   border: none;
   cursor: pointer;
   font: inherit;
   font-weight: 700;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .resume-tailor-result__button:hover {
@@ -138,30 +130,34 @@
 }
 
 .resume-tailor-result__button--secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
+  background: transparent;
+  color: #111827;
+  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.1);
 }
 
 .resume-tailor-result__button--primary {
-  background: linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%);
-  color: #0f172a;
-  box-shadow: 0 12px 28px rgba(148, 163, 184, 0.18);
+  background: #111827;
+  color: #fff;
 }
 
 .resume-tailor-result__stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 18px;
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
 }
 
 .resume-tailor-result__stat {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 0;
+  border-right: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.resume-tailor-result__stat:last-child {
+  border-right: none;
 }
 
 .resume-tailor-result__stat-value {
@@ -170,17 +166,15 @@
 }
 
 .resume-tailor-result__stat-label {
-  color: rgba(248, 250, 252, 0.68);
+  color: rgba(17, 24, 39, 0.62);
   font-size: 0.92rem;
 }
 
 .resume-tailor-result__note {
   display: flex;
   gap: 14px;
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 0 18px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
 }
 
 .resume-tailor-result__note svg {
@@ -197,7 +191,7 @@
 
 .resume-tailor-result__note p {
   margin: 0;
-  color: rgba(248, 250, 252, 0.72);
+  color: rgba(17, 24, 39, 0.68);
   line-height: 1.6;
 }
 
@@ -217,18 +211,16 @@
 
 .resume-tailor-result__list {
   display: grid;
-  gap: 14px;
+  gap: 0;
 }
 
 .resume-tailor-result__item {
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
 }
 
 .resume-tailor-result__item--muted {
-  background: rgba(255, 255, 255, 0.05);
+  opacity: 0.9;
 }
 
 .resume-tailor-result__item-top {
@@ -237,7 +229,7 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
-  color: rgba(248, 250, 252, 0.6);
+  color: rgba(17, 24, 39, 0.52);
   font-size: 0.86rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -257,30 +249,28 @@
 }
 
 .resume-tailor-result__item-text strong {
-  color: #ffffff;
+  color: #111827;
 }
 
 .resume-tailor-result__item-reason {
-  color: rgba(248, 250, 252, 0.8);
+  color: rgba(17, 24, 39, 0.76);
 }
 
 .resume-tailor-result__item-footnote {
-  color: rgba(191, 219, 254, 0.88);
+  color: rgba(37, 99, 235, 0.9);
 }
 
 .resume-tailor-result__placeholder {
-  padding: 18px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(248, 250, 252, 0.7);
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  color: rgba(17, 24, 39, 0.68);
 }
 
 .resume-tailor-result__preview-frame {
   overflow: hidden;
   min-height: 480px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(17, 24, 39, 0.02);
+  border: 1px solid rgba(17, 24, 39, 0.08);
 }
 
 .resume-tailor-result__iframe {
@@ -313,14 +303,18 @@
   .resume-tailor-result__stats {
     grid-template-columns: 1fr;
   }
+
+  .resume-tailor-result__stat {
+    border-right: none;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  }
+
+  .resume-tailor-result__stat:last-child {
+    border-bottom: none;
+  }
 }
 
 @media (max-width: 640px) {
-  .resume-tailor-result {
-    padding: 24px;
-    border-radius: 24px;
-  }
-
   .resume-tailor-result__preview-frame,
   .resume-tailor-result__iframe {
     min-height: 360px;

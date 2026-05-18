@@ -16,12 +16,7 @@ export interface AuthContextType {
 export interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (
-    data: Partial<Application> &
-      Pick<Application, "company" | "position" | "status"> & {
-        _id?: string;
-      },
-  ) => void;
+  onSubmit: (data: ApplicationFormData) => void;
   initialData?: Partial<Application> | null;
   mode?: "create" | "edit";
 }
@@ -64,6 +59,11 @@ export interface Application {
   createdAt: string;
   updatedAt: string;
 }
+
+export type ApplicationFormData = Partial<Application> &
+  Pick<Application, "company" | "position" | "status"> & {
+    _id?: string;
+  };
 
 export enum ApplicationStatus {
   SAVED = "saved",

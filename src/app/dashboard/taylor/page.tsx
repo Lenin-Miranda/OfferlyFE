@@ -11,16 +11,9 @@ import Sidebar from "../components/Sidebar";
 import ResumeTailorForm from "../components/ResumeTailorForm";
 import ResumeTailorResult from "../components/ResumeTailorResult";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
-import { ApplicationStatus } from "@/types";
 import { useResumeTailor } from "@/hooks/useResumeTailor";
+import { getApplicationOverviewStats } from "../applicationHelpers";
 import "./page.css";
-
-const CLOSED_STATUSES = [
-  ApplicationStatus.REJECTED,
-  ApplicationStatus.ACCEPTED,
-  ApplicationStatus.WITHDRAWN,
-  ApplicationStatus.GHOSTED,
-];
 
 export default function TaylorPage() {
   const { applications } = useContext(ApplicationContext);
@@ -48,22 +41,10 @@ export default function TaylorPage() {
     }
   }, [result, isLoading]);
 
-  const applicationStats = useMemo(() => {
-    const activeApplications = applications.filter(
-      (application) => !CLOSED_STATUSES.includes(application.status),
-    ).length;
-    const interviewingApplications = applications.filter((application) =>
-      [ApplicationStatus.INTERVIEWING, ApplicationStatus.OFFER].includes(
-        application.status,
-      ),
-    ).length;
-
-    return {
-      total: applications.length,
-      active: activeApplications,
-      interviewing: interviewingApplications,
-    };
-  }, [applications]);
+  const applicationStats = useMemo(
+    () => getApplicationOverviewStats(applications),
+    [applications],
+  );
 
   const displayedError = formError ?? error;
 
@@ -124,31 +105,31 @@ export default function TaylorPage() {
   return (
     <>
       <Sidebar />
-      <main className="applications-page">
-        <section className="applications-page__hero">
-          <div className="applications-page__hero-copy">
-            <span className="applications-page__eyebrow">Taylor Workspace</span>
-            <h1 className="applications-page__title">
+      <main className="taylor-page">
+        <section className="taylor-page__hero" data-aos="fade-up">
+          <div className="taylor-page__hero-copy">
+            <span className="taylor-page__eyebrow">Taylor Workspace</span>
+            <h1 className="taylor-page__title">
               Tailor each resume to the job without losing your format
             </h1>
-            <p className="applications-page__subtitle">
+            <p className="taylor-page__subtitle">
               Upload a PDF, paste the full job post, and review every applied or
               skipped change before you send your application.
             </p>
           </div>
 
-          <div className="applications-page__stats">
-            <article className="applications-page__stat-card">
+          <div className="taylor-page__stats">
+            <article className="taylor-page__stat-card">
               <FiBriefcase />
               <strong>{applicationStats.total}</strong>
               <span>Total applications tracked</span>
             </article>
-            <article className="applications-page__stat-card">
+            <article className="taylor-page__stat-card">
               <FiTarget />
               <strong>{applicationStats.active}</strong>
               <span>Active applications</span>
             </article>
-            <article className="applications-page__stat-card">
+            <article className="taylor-page__stat-card">
               <FiCheckCircle />
               <strong>{applicationStats.interviewing}</strong>
               <span>Interview pipeline</span>
@@ -156,8 +137,12 @@ export default function TaylorPage() {
           </div>
         </section>
 
-        <section className="applications-page__guidance">
-          <div className="applications-page__guidance-card">
+        <section
+          className="taylor-page__guidance"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <div className="taylor-page__guidance-card">
             <FiFileText />
             <p>
               The AI tries to preserve the same resume layout and may skip edits
@@ -166,8 +151,12 @@ export default function TaylorPage() {
           </div>
         </section>
 
-        <section className="applications-page__content">
-          <div className="applications-page__form-panel">
+        <section className="taylor-page__content">
+          <div
+            className="taylor-page__form-panel"
+            data-aos="fade-right"
+            data-aos-delay="140"
+          >
             <ResumeTailorForm
               selectedFile={selectedFile}
               jobPost={jobPost}
@@ -180,7 +169,12 @@ export default function TaylorPage() {
             />
           </div>
 
-          <div ref={resultPanelRef} className="applications-page__result-panel">
+          <div
+            ref={resultPanelRef}
+            className="taylor-page__result-panel"
+            data-aos="fade-left"
+            data-aos-delay="200"
+          >
             <ResumeTailorResult
               result={result}
               previewUrl={previewUrl}

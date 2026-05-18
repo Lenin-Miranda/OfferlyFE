@@ -1,63 +1,33 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import Link from "next/link";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
-  FiBookmark,
-  FiSend,
-  FiClock,
+  FiArrowRight,
+  FiBarChart2,
+  FiBriefcase,
   FiCheckCircle,
-  FiMapPin,
-  FiDollarSign,
-  FiCalendar,
+  FiClock,
+  FiPlus,
+  FiZap,
 } from "react-icons/fi";
-import "./page.css";
 import Sidebar from "./components/Sidebar";
 import ApplicationModal from "./components/ApplicationModal";
 import MessageNotification from "./components/MessageNotification";
-import ConfirmationMessage from "./components/ConfirmationMessage";
-import { useContext } from "react";
-import { Application, ApplicationStatus } from "@/types";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
-
-const kanbanColumns = [
-  {
-    id: "saved",
-    title: "Saved",
-    statuses: [ApplicationStatus.SAVED],
-    color: "gray",
-    icon: FiBookmark,
-  },
-  {
-    id: "applied",
-    title: "Applied",
-    statuses: [ApplicationStatus.APPLIED],
-    color: "blue",
-    icon: FiSend,
-  },
-  {
-    id: "inprogress",
-    title: "In Progress",
-    statuses: [ApplicationStatus.INTERVIEWING, ApplicationStatus.OFFER],
-    color: "orange",
-    icon: FiClock,
-  },
-  {
-    id: "closed",
-    title: "Closed",
-    statuses: [
-      ApplicationStatus.REJECTED,
-      ApplicationStatus.ACCEPTED,
-      ApplicationStatus.WITHDRAWN,
-      ApplicationStatus.GHOSTED,
-    ],
-    color: "green",
-    icon: FiCheckCircle,
-  },
-];
-
-type ApplicationSubmitData = Partial<Application> &
-  Pick<Application, "company" | "position" | "status"> & {
-    _id?: string;
-  };
+import {
+  ApplicationFormData,
+  ApplicationStatus,
+} from "@/types";
+import {
+  formatApplicationDate,
+  getApplicationOverviewStats,
+  getApplicationsByStatuses,
+  getRecentApplications,
+  getStatusDisplayName,
+  kanbanColumns,
+} from "./applicationHelpers";
+import "./page.css";
 
 export default function Dashboard() {
   const {
@@ -69,56 +39,37 @@ export default function Dashboard() {
     setMessageType,
   } = useContext(ApplicationContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingApp, setEditingApp] = useState<Application | null>(null);
-  const [isMessageOpen, setIsMessageOpen] = useState(false);
-  const [selectedAppForDelete, setSelectedAppForDelete] = useState<{
-    id: string;
-    company: string;
-  } | null>(null);
-  const [editConfirmationData, setEditConfirmationData] = useState<{
-    isOpen: boolean;
-    appData: ApplicationSubmitData;
-  } | null>(null);
 
   useEffect(() => {
     if (isMessage) {
       const timer = setTimeout(() => {
         setIsMessage("");
       }, 4000);
+
       return () => clearTimeout(timer);
     }
   }, [isMessage, setIsMessage]);
 
-  const handleOpenModal = () => {
-    setEditingApp(null);
-    setIsModalOpen(true);
-  };
+  const overviewStats = useMemo(
+    () => getApplicationOverviewStats(applications),
+    [applications],
+  );
+  const recentApplications = useMemo(
+    () => getRecentApplications(applications),
+    [applications],
+  );
+  const maxColumnCount = useMemo(
+    () =>
+      Math.max(
+        1,
+        ...kanbanColumns.map(
+          (column) => getApplicationsByStatuses(applications, column.statuses).length,
+        ),
+      ),
+    [applications],
+  );
 
-  const handleEditClick = (app: Application) => {
-    setEditingApp(app);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingApp(null);
-  };
-
-  const handleDeleteClick = (appId: string, companyName: string) => {
-    setSelectedAppForDelete({ id: appId, company: companyName });
-    setIsMessageOpen(true);
-  };
-
-  const handleCloseConfirmation = () => {
-    setIsMessageOpen(false);
-    setSelectedAppForDelete(null);
-  };
-
-  const handleCloseEditConfirmation = () => {
-    setEditConfirmationData(null);
-  };
-
-  const handleModalSubmit = (data: ApplicationSubmitData) => {
+  const handleModalSubmit = async (data: ApplicationFormData) => {
     if (!data.company || !data.position || !data.status) {
       setMessageType("error");
       setIsMessage(
@@ -127,253 +78,251 @@ export default function Dashboard() {
       return;
     }
 
-    if (editingApp) {
-      setEditConfirmationData({
-        isOpen: true,
-        appData: data,
-      });
-      setIsModalOpen(false);
-    } else {
-      addApplication(data);
+    try {
+      await addApplication(data);
       setMessageType("success");
       setIsMessage("Application added successfully!");
       setIsModalOpen(false);
-    }
-  };
-
-  const getApplicationsByStatuses = (statuses: ApplicationStatus[]) => {
-    return applications.filter((app) => statuses.includes(app.status));
-  };
-
-  const getStatusDisplayName = (status: ApplicationStatus) => {
-    switch (status) {
-      case ApplicationStatus.SAVED:
-        return "Saved";
-      case ApplicationStatus.APPLIED:
-        return "Applied";
-      case ApplicationStatus.INTERVIEWING:
-        return "Interviewing";
-      case ApplicationStatus.OFFER:
-        return "Offer";
-      case ApplicationStatus.REJECTED:
-        return "Rejected";
-      case ApplicationStatus.ACCEPTED:
-        return "Accepted";
-      case ApplicationStatus.WITHDRAWN:
-        return "Withdrawn";
-      case ApplicationStatus.GHOSTED:
-        return "Ghosted";
-      default:
-        return "Unknown";
-    }
-  };
-
-  const getStatusClass = (status: ApplicationStatus) => {
-    switch (status) {
-      case ApplicationStatus.SAVED:
-        return "status-saved";
-      case ApplicationStatus.APPLIED:
-        return "status-applied";
-      case ApplicationStatus.INTERVIEWING:
-        return "status-interviewing";
-      case ApplicationStatus.OFFER:
-        return "status-offer";
-      case ApplicationStatus.REJECTED:
-        return "status-rejected";
-      case ApplicationStatus.GHOSTED:
-        return "status-ghosted";
-      default:
-        return "status-applied";
-    }
-  };
-
-  const formatDate = (dateString: string | Date | undefined): string => {
-    if (!dateString) return "Not specified";
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
     } catch {
-      return "Invalid date";
+      setMessageType("error");
+      setIsMessage("We couldn't add the application. Please try again.");
     }
   };
 
   return (
     <>
       <Sidebar />
-      <section className="dashboard">
-        <div className="dashboard__header">
-          <h1 className="dashboard__title">Job Application Tracker</h1>
-          <p className="dashboard__subtitle">
-            Organize and track your job applications efficiently
-          </p>
-        </div>
-        <div className="dashboard__stats">
-          <div className="stat-card">
-            <div className="stat-number">
-              {Array.isArray(applications) ? applications.length : 0}
-            </div>
-            <div className="stat-label">Total Applications</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">
-              {
-                getApplicationsByStatuses([
-                  ApplicationStatus.INTERVIEWING,
-                  ApplicationStatus.OFFER,
-                ]).length
-              }
-            </div>
-            <div className="stat-label">In Progress</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">
-              {
-                getApplicationsByStatuses([
-                  ApplicationStatus.REJECTED,
-                  ApplicationStatus.ACCEPTED,
-                  ApplicationStatus.WITHDRAWN,
-                  ApplicationStatus.GHOSTED,
-                ]).length
-              }
-            </div>
-            <div className="stat-label">Closed Applications</div>
-          </div>
-        </div>
-        <div className="dashboard__action">
-          <div className="dashboard__button-ctn">
-            <p className="dashboard__action-text">
-              Ready to add your next job application? Track your progress and
-              never miss an opportunity.
+      <main className="dashboard-overview">
+        <section className="dashboard-overview__hero" data-aos="fade-up">
+          <div className="dashboard-overview__hero-copy">
+            <span className="dashboard-overview__eyebrow">Dashboard Overview</span>
+            <h1 className="dashboard-overview__title">
+              Keep your job search clear, focused, and moving forward
+            </h1>
+            <p className="dashboard-overview__subtitle">
+              Get a quick read on your pipeline, jump into the applications
+              workspace, and tailor your next resume without losing momentum.
             </p>
-            <button className="dashboard__ctn-btn" onClick={handleOpenModal}>
-              Add New Application
-            </button>
+            <div className="dashboard-overview__hero-actions">
+              <Link
+                href="/dashboard/applications"
+                className="dashboard-overview__button dashboard-overview__button--primary"
+              >
+                Open Applications
+                <FiArrowRight />
+              </Link>
+              <Link
+                href="/dashboard/taylor"
+                className="dashboard-overview__button dashboard-overview__button--secondary"
+              >
+                Open Taylor
+                <FiZap />
+              </Link>
+            </div>
           </div>
-        </div>
-        <div className="kanban-board">
-          <h2 className="kanban-title">Application Status Board</h2>
 
-          <div className="kanban-columns">
-            {kanbanColumns.map((column) => (
-              <div key={column.id} className={`kanban-column ${column.color}`}>
-                <div className="kanban-column-header">
-                  <div className="kanban-header-left">
-                    <column.icon className="kanban-icon" />
-                    <h3 className="kanban-column-title">{column.title}</h3>
-                  </div>
-                  <span className="kanban-column-count">
-                    {getApplicationsByStatuses(column.statuses).length}
-                  </span>
-                </div>
-
-                <div className="kanban-cards">
-                  {getApplicationsByStatuses(column.statuses).map((app) => (
-                    <div
-                      key={app._id || app.id}
-                      className={`kanban-card ${getStatusClass(app.status)}`}
-                    >
-                      <div className="card-header">
-                        <h4 className="card-company">{app.company}</h4>
-                        <div
-                          className={`status-dot ${getStatusClass(app.status)}`}
-                        ></div>
-                      </div>
-
-                      <p className="card-position">{app.position}</p>
-                      <div className="card-status">
-                        <span className="status-label">Status:</span>
-                        <span
-                          className={`status-badge ${getStatusClass(
-                            app.status,
-                          )}`}
-                        >
-                          {getStatusDisplayName(app.status)}
-                        </span>
-                      </div>
-
-                      <div className="card-details">
-                        <div className="detail-item">
-                          <FiMapPin className="detail-icon" />
-                          <span className="detail-text">{app.location}</span>
-                        </div>
-                        <div className="detail-item">
-                          <FiDollarSign className="detail-icon" />
-                          <span className="detail-text">{app.salary}</span>
-                        </div>
-                        <div className="detail-item">
-                          <FiCalendar className="detail-icon" />
-                          <span className="detail-text">
-                            {formatDate(app.appliedAt)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="card-actions">
-                        <button
-                          className="btn-edit"
-                          onClick={() => handleEditClick(app)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn-delete"
-                          onClick={() =>
-                            handleDeleteClick(app._id || app.id, app.company)
-                          }
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          <div
+            className="dashboard-overview__summary-card"
+            data-aos="fade-left"
+            data-aos-delay="120"
+          >
+            <div className="dashboard-overview__summary-top">
+              <FiBarChart2 />
+              <span>Pipeline snapshot</span>
+            </div>
+            <strong>{overviewStats.active}</strong>
+            <p>
+              Active opportunities across saved, applied, and in-progress stages.
+            </p>
+            <div className="dashboard-overview__summary-metrics">
+              <div>
+                <span>Total</span>
+                <strong>{overviewStats.total}</strong>
               </div>
-            ))}
+              <div>
+                <span>Interviews</span>
+                <strong>{overviewStats.interviewing}</strong>
+              </div>
+              <div>
+                <span>Closed</span>
+                <strong>{overviewStats.closed}</strong>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section
+          className="dashboard-overview__stats-grid"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <article className="dashboard-overview__stat-card">
+            <FiBriefcase />
+            <strong>{overviewStats.total}</strong>
+            <span>Total applications tracked</span>
+          </article>
+          <article className="dashboard-overview__stat-card">
+            <FiClock />
+            <strong>{overviewStats.interviewing}</strong>
+            <span>In progress right now</span>
+          </article>
+          <article className="dashboard-overview__stat-card">
+            <FiCheckCircle />
+            <strong>{overviewStats.closed}</strong>
+            <span>Closed outcomes logged</span>
+          </article>
+        </section>
+
+        <section className="dashboard-overview__content">
+          <article
+            className="dashboard-overview__panel dashboard-overview__panel--pipeline"
+            data-aos="fade-up"
+            data-aos-delay="160"
+          >
+            <div className="dashboard-overview__panel-head">
+              <div>
+                <span className="dashboard-overview__panel-eyebrow">
+                  Pipeline
+                </span>
+                <h2>Status snapshot</h2>
+              </div>
+              <Link href="/dashboard/applications">Manage workspace</Link>
+            </div>
+
+            <div className="dashboard-overview__pipeline-list">
+              {kanbanColumns.map((column) => {
+                const count = getApplicationsByStatuses(
+                  applications,
+                  column.statuses,
+                ).length;
+                const width = `${Math.max((count / maxColumnCount) * 100, count ? 14 : 0)}%`;
+
+                return (
+                  <div
+                    key={column.id}
+                    className="dashboard-overview__pipeline-item"
+                  >
+                    <div className="dashboard-overview__pipeline-top">
+                      <div className="dashboard-overview__pipeline-label">
+                        <column.icon />
+                        <span>{column.title}</span>
+                      </div>
+                      <strong>{count}</strong>
+                    </div>
+                    <div className="dashboard-overview__pipeline-track">
+                      <span
+                        className={`dashboard-overview__pipeline-fill dashboard-overview__pipeline-fill--${column.color}`}
+                        style={{ width }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </article>
+
+          <article
+            className="dashboard-overview__panel dashboard-overview__panel--recent"
+            data-aos="fade-up"
+            data-aos-delay="220"
+          >
+            <div className="dashboard-overview__panel-head">
+              <div>
+                <span className="dashboard-overview__panel-eyebrow">Recent</span>
+                <h2>Latest application activity</h2>
+              </div>
+              <Link href="/dashboard/applications">View all</Link>
+            </div>
+
+            {recentApplications.length > 0 ? (
+              <div className="dashboard-overview__recent-list">
+                {recentApplications.map((application) => (
+                  <div
+                    key={application._id || application.id}
+                    className="dashboard-overview__recent-item"
+                  >
+                    <div>
+                      <strong>{application.company}</strong>
+                      <p>{application.position}</p>
+                    </div>
+                    <div className="dashboard-overview__recent-meta">
+                      <span>
+                        {getStatusDisplayName(application.status as ApplicationStatus)}
+                      </span>
+                      <small>
+                        {formatApplicationDate(
+                          application.updatedAt || application.createdAt,
+                        )}
+                      </small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="dashboard-overview__empty-state">
+                No applications yet. Add your first one to start building your
+                pipeline.
+              </div>
+            )}
+          </article>
+
+          <article
+            className="dashboard-overview__panel dashboard-overview__panel--actions"
+            data-aos="fade-up"
+            data-aos-delay="280"
+          >
+            <div className="dashboard-overview__panel-head">
+              <div>
+                <span className="dashboard-overview__panel-eyebrow">Actions</span>
+                <h2>Move your search forward</h2>
+              </div>
+            </div>
+
+            <div className="dashboard-overview__action-grid">
+              <Link
+                href="/dashboard/applications"
+                className="dashboard-overview__action-card"
+              >
+                <FiBriefcase />
+                <strong>Applications workspace</strong>
+                <span>Track, edit, and review every opportunity in one board.</span>
+              </Link>
+              <Link
+                href="/dashboard/taylor"
+                className="dashboard-overview__action-card"
+              >
+                <FiZap />
+                <strong>Resume tailoring</strong>
+                <span>Adapt your resume to a job post and download the updated PDF.</span>
+              </Link>
+              <button
+                type="button"
+                className="dashboard-overview__action-card dashboard-overview__action-card--button"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <FiPlus />
+                <strong>Add new application</strong>
+                <span>Create a fresh application entry without leaving the overview.</span>
+              </button>
+            </div>
+          </article>
+        </section>
+      </main>
 
       <ApplicationModal
         isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
-        mode={editingApp ? "edit" : "create"}
-        initialData={editingApp}
+        mode="create"
       />
 
-      {isMessage && (
+      {isMessage ? (
         <MessageNotification
           message={isMessage}
           type={messageType}
           onClose={() => setIsMessage("")}
         />
-      )}
-
-      {selectedAppForDelete && (
-        <ConfirmationMessage
-          message={`Are you sure you want to delete the application for ${selectedAppForDelete.company}? This action cannot be undone.`}
-          isOpen={isMessageOpen}
-          onClose={handleCloseConfirmation}
-          mode="delete"
-          id={selectedAppForDelete.id}
-          changes={{}}
-        />
-      )}
-
-      {editConfirmationData && (
-        <ConfirmationMessage
-          message={`Are you sure you want to update the application for ${editConfirmationData.appData.company}?`}
-          isOpen={editConfirmationData.isOpen}
-          onClose={handleCloseEditConfirmation}
-          mode="edit"
-          id={editConfirmationData.appData._id || editConfirmationData.appData.id || ""}
-          changes={editConfirmationData.appData}
-        />
-      )}
+      ) : null}
     </>
   );
 }
