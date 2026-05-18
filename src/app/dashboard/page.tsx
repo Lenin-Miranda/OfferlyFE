@@ -54,6 +54,11 @@ const kanbanColumns = [
   },
 ];
 
+type ApplicationSubmitData = Partial<Application> &
+  Pick<Application, "company" | "position" | "status"> & {
+    _id?: string;
+  };
+
 export default function Dashboard() {
   const {
     applications,
@@ -72,7 +77,7 @@ export default function Dashboard() {
   } | null>(null);
   const [editConfirmationData, setEditConfirmationData] = useState<{
     isOpen: boolean;
-    appData: Application;
+    appData: ApplicationSubmitData;
   } | null>(null);
 
   useEffect(() => {
@@ -82,7 +87,7 @@ export default function Dashboard() {
       }, 4000);
       return () => clearTimeout(timer);
     }
-  }, [isMessage]);
+  }, [isMessage, setIsMessage]);
 
   const handleOpenModal = () => {
     setEditingApp(null);
@@ -113,7 +118,7 @@ export default function Dashboard() {
     setEditConfirmationData(null);
   };
 
-  const handleModalSubmit = (data: Application) => {
+  const handleModalSubmit = (data: ApplicationSubmitData) => {
     if (!data.company || !data.position || !data.status) {
       setMessageType("error");
       setIsMessage(

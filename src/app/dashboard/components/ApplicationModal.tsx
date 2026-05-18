@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { ApplicationStatus } from "@/types";
+import { Application, ApplicationStatus } from "@/types";
 import {
   FiX,
   FiBriefcase,
@@ -14,6 +14,23 @@ import {
 import "./ApplicationModal.css";
 import { ApplicationModalProps } from "@/types";
 
+function getInitialFormData(initialData?: Partial<Application> | null) {
+  return {
+    company: initialData?.company || "",
+    position: initialData?.position || "",
+    status: initialData?.status || ApplicationStatus.SAVED,
+    location: initialData?.location || "",
+    salary: initialData?.salary ? String(initialData.salary) : "",
+    currency: initialData?.currency || "USD",
+    jobUrl: initialData?.jobUrl || "",
+    description: initialData?.description || "",
+    appliedAt: initialData?.appliedAt
+      ? new Date(initialData.appliedAt).toISOString().split("T")[0]
+      : "",
+    notes: initialData?.notes || "",
+  };
+}
+
 export default function ApplicationModal({
   isOpen,
   onClose,
@@ -21,55 +38,41 @@ export default function ApplicationModal({
   initialData,
   mode = "create",
 }: ApplicationModalProps) {
-  const [isAnimating, setIsAnimating] = useState(false);
+  if (!isOpen) {
+    return null;
+  }
+
+  return (
+    <ApplicationModalContent
+      onClose={onClose}
+      onSubmit={onSubmit}
+      initialData={initialData}
+      mode={mode}
+    />
+  );
+}
+
+function ApplicationModalContent({
+  onClose,
+  onSubmit,
+  initialData,
+  mode,
+}: Omit<ApplicationModalProps, "isOpen">) {
+  const [isAnimating, setIsAnimating] = useState(true);
   const modalRef = useRef<HTMLDivElement>(null);
-  const [formData, setFormData] = useState({
-    company: "",
-    position: "",
-    status: ApplicationStatus.SAVED,
-    location: "",
-    salary: "",
-    currency: "USD",
-    jobUrl: "",
-    description: "",
-    appliedAt: "",
-    notes: "",
-  });
+  const [formData, setFormData] = useState(() => getInitialFormData(initialData));
 
   useEffect(() => {
-    if (isOpen) {
-      setIsAnimating(true);
-      document.body.style.overflow = "hidden";
-      setTimeout(() => {
-        modalRef.current?.focus();
-      }, 100);
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = "hidden";
+    const focusTimer = window.setTimeout(() => {
+      modalRef.current?.focus();
+    }, 100);
 
     return () => {
+      window.clearTimeout(focusTimer);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (initialData && mode === "edit") {
-      setFormData({
-        company: initialData.company || "",
-        position: initialData.position || "",
-        status: initialData.status || ApplicationStatus.SAVED,
-        location: initialData.location || "",
-        salary: initialData.salary ? String(initialData.salary) : "",
-        appliedAt: initialData.appliedAt
-          ? new Date(initialData.appliedAt).toISOString().split("T")[0]
-          : "",
-        currency: initialData.currency || "USD",
-        jobUrl: initialData.jobUrl || "",
-        description: initialData.description || "",
-        notes: initialData.notes || "",
-      });
-    }
-  }, [initialData, mode]);
+  }, []);
 
   const handleClose = () => {
     setIsAnimating(false);
@@ -99,7 +102,9 @@ export default function ApplicationModal({
           _id: initialData._id || initialData.id,
         }),
       salary: formData.salary ? Number(formData.salary) : undefined,
-      appliedAt: formData.appliedAt ? new Date(formData.appliedAt) : undefined,
+      appliedAt: formData.appliedAt
+        ? new Date(formData.appliedAt).toISOString()
+        : undefined,
     };
     onSubmit(submitData);
     handleClose();
@@ -116,8 +121,6 @@ export default function ApplicationModal({
       [name]: value,
     }));
   };
-
-  if (!isOpen) return null;
 
   return (
     <div

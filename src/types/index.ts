@@ -16,8 +16,13 @@ export interface AuthContextType {
 export interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
-  initialData?: any;
+  onSubmit: (
+    data: Partial<Application> &
+      Pick<Application, "company" | "position" | "status"> & {
+        _id?: string;
+      },
+  ) => void;
+  initialData?: Partial<Application> | null;
   mode?: "create" | "edit";
 }
 
@@ -79,6 +84,37 @@ export interface ApiResponse<T> {
 export interface ApiError {
   message: string;
   errors?: Record<string, string[]>;
+}
+
+export interface ResumeTailorChange {
+  lineId: string;
+  page: number;
+  originalText: string;
+  replacementText: string;
+  reason: string;
+}
+
+export interface ResumeTailorSkippedChange {
+  lineId: string;
+  page: number;
+  originalText: string;
+  attemptedText: string;
+  reason: string;
+  skippedBecause: string;
+}
+
+export interface ResumeTailorNotes {
+  preservedLayout: string;
+}
+
+export interface ResumeTailorResponse {
+  fileName: string;
+  mimeType: "application/pdf";
+  pdfBase64: string;
+  summary: string;
+  changes: ResumeTailorChange[];
+  skippedChanges: ResumeTailorSkippedChange[];
+  notes: ResumeTailorNotes;
 }
 
 export interface MessageNotificationProps {

@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Application } from "@/types";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
 import "./ConfirmationMessage.css";
@@ -26,13 +26,13 @@ export default function ConfirmationMessage({
   const [isLoading, setIsLoading] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
       onClose();
       setIsClosing(false);
     }, 300);
-  };
+  }, [onClose]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -56,7 +56,7 @@ export default function ConfirmationMessage({
       document.removeEventListener("keydown", handleEscapeKey);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [handleClose, isOpen]);
 
   async function handleSubmit() {
     setIsLoading(true);
@@ -71,7 +71,7 @@ export default function ConfirmationMessage({
         setIsMessage("Application updated successfully!");
       }
       handleClose();
-    } catch (e) {
+    } catch {
       setMessageType("error");
       setIsMessage("An error occurred. Please try again.");
     } finally {

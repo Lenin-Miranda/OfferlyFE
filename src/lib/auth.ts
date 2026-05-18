@@ -4,7 +4,7 @@ export const checkAuth = async (): Promise<boolean> => {
   try {
     await api.get("/auth/check-auth");
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };

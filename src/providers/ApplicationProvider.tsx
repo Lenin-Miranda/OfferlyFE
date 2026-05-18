@@ -21,17 +21,17 @@ export function ApplicationProvider({
   );
 
   useEffect(() => {
-    handleApplications();
-  }, []);
+    const loadApplications = async () => {
+      try {
+        const apps = await getApplications();
+        setApplications(apps);
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      }
+    };
 
-  const handleApplications = async () => {
-    try {
-      const apps = await getApplications();
-      setApplications(apps);
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-    }
-  };
+    void loadApplications();
+  }, []);
 
   const handleDeleteApplication = async (id: string) => {
     try {
@@ -66,10 +66,11 @@ export function ApplicationProvider({
     >,
   ): Promise<Application> => {
     try {
-      console.log('ApplicationProvider: Editing application with id:', id);
       const updatedApplication = await editApplication(id, updates);
       setApplications((prev) =>
-        prev.map((app) => (app._id === id || app.id === id ? updatedApplication : app)),
+        prev.map((app) =>
+          app._id === id || app.id === id ? updatedApplication : app,
+        ),
       );
       return updatedApplication;
     } catch (e) {

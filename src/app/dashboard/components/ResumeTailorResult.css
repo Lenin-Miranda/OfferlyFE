@@ -1,0 +1,328 @@
+.resume-tailor-result {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100%;
+  padding: 28px;
+  border-radius: 28px;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.92) 0%,
+    rgba(30, 41, 59, 0.86) 100%
+  );
+  color: #f8fafc;
+  box-shadow: 0 30px 80px rgba(11, 18, 32, 0.2);
+}
+
+.resume-tailor-result__loading,
+.resume-tailor-result__empty {
+  display: flex;
+  flex: 1;
+  min-height: 420px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 24px;
+}
+
+.resume-tailor-result__loading h2,
+.resume-tailor-result__empty h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.resume-tailor-result__loading p,
+.resume-tailor-result__empty p {
+  max-width: 540px;
+  margin: 0;
+  color: rgba(248, 250, 252, 0.72);
+  line-height: 1.7;
+}
+
+.resume-tailor-result__loading-icon,
+.resume-tailor-result__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 74px;
+  height: 74px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.resume-tailor-result__loading-icon svg,
+.resume-tailor-result__empty-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.resume-tailor-result__loading-icon svg {
+  animation: resume-tailor-result-spin 1s linear infinite;
+}
+
+.resume-tailor-result__loading-steps {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  margin-top: 8px;
+}
+
+.resume-tailor-result__loading-steps span {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(248, 250, 252, 0.92);
+}
+
+.resume-tailor-result__hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.resume-tailor-result__eyebrow {
+  display: inline-flex;
+  margin-bottom: 10px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(248, 250, 252, 0.85);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.resume-tailor-result__title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.1;
+}
+
+.resume-tailor-result__summary {
+  margin: 12px 0 0;
+  color: rgba(248, 250, 252, 0.78);
+  line-height: 1.7;
+}
+
+.resume-tailor-result__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.resume-tailor-result__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resume-tailor-result__button:hover {
+  transform: translateY(-1px);
+}
+
+.resume-tailor-result__button--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
+.resume-tailor-result__button--primary {
+  background: linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%);
+  color: #0f172a;
+  box-shadow: 0 12px 28px rgba(148, 163, 184, 0.18);
+}
+
+.resume-tailor-result__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.resume-tailor-result__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resume-tailor-result__stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.resume-tailor-result__stat-label {
+  color: rgba(248, 250, 252, 0.68);
+  font-size: 0.92rem;
+}
+
+.resume-tailor-result__note {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resume-tailor-result__note svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.resume-tailor-result__note strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.resume-tailor-result__note p {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.72);
+  line-height: 1.6;
+}
+
+.resume-tailor-result__section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.resume-tailor-result__section-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.resume-tailor-result__list {
+  display: grid;
+  gap: 14px;
+}
+
+.resume-tailor-result__item {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resume-tailor-result__item--muted {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.resume-tailor-result__item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: rgba(248, 250, 252, 0.6);
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.resume-tailor-result__item-text,
+.resume-tailor-result__item-reason,
+.resume-tailor-result__item-footnote {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.resume-tailor-result__item-text + .resume-tailor-result__item-text,
+.resume-tailor-result__item-text + .resume-tailor-result__item-reason,
+.resume-tailor-result__item-reason + .resume-tailor-result__item-footnote {
+  margin-top: 10px;
+}
+
+.resume-tailor-result__item-text strong {
+  color: #ffffff;
+}
+
+.resume-tailor-result__item-reason {
+  color: rgba(248, 250, 252, 0.8);
+}
+
+.resume-tailor-result__item-footnote {
+  color: rgba(191, 219, 254, 0.88);
+}
+
+.resume-tailor-result__placeholder {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(248, 250, 252, 0.7);
+}
+
+.resume-tailor-result__preview-frame {
+  overflow: hidden;
+  min-height: 480px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resume-tailor-result__iframe {
+  width: 100%;
+  min-height: 480px;
+  border: none;
+  background: #fff;
+}
+
+@keyframes resume-tailor-result-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 900px) {
+  .resume-tailor-result__hero {
+    flex-direction: column;
+  }
+
+  .resume-tailor-result__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .resume-tailor-result__button {
+    flex: 1;
+  }
+
+  .resume-tailor-result__stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .resume-tailor-result {
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .resume-tailor-result__preview-frame,
+  .resume-tailor-result__iframe {
+    min-height: 360px;
+  }
+}

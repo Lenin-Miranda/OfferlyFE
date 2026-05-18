@@ -12,8 +12,6 @@ export default function Login() {
   const { errorMessage, setErrorMessage, isOpen, setIsOpen } =
     useContext(ErrorContext);
   const [isRegister, setIsRegister] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [isMessage, setIsMessage] = useState("");
   const [isForm, setIsForm] = useState({
     name: "",
     email: "",
@@ -54,7 +52,6 @@ export default function Login() {
       });
     } catch (e) {
       console.error(`Error Message:`, e);
-      setIsError(true);
       setErrorMessage("An error occurred. Please try again.");
       setIsOpen(true);
     }
@@ -137,14 +134,14 @@ export default function Login() {
             onClick={togleForm}
             className={isRegister ? "login__form-btn-hide" : "login__form-btn"}
           >
-            Don't have an account?, Register here!
+            Don&apos;t have an account?, Register here!
           </button>
           <button
             type="button"
             onClick={togleForm}
             className={!isRegister ? "login__form-btn-hide" : "login__form-btn"}
           >
-            Already register?, Login here!
+            Already registered?, Login here!
           </button>
         </div>
       </form>

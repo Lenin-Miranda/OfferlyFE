@@ -44,8 +44,11 @@ export default function TypeWriter({
         return () => clearTimeout(timeout);
       } else {
         // Cambiar a la siguiente frase
-        setIsDeleting(false);
-        setCurrentIndex((prev) => (prev + 1) % texts.length);
+        const timeout = setTimeout(() => {
+          setIsDeleting(false);
+          setCurrentIndex((prev) => (prev + 1) % texts.length);
+        }, deletingSpeed);
+        return () => clearTimeout(timeout);
       }
     }
   }, [

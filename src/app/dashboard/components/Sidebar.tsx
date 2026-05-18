@@ -3,6 +3,7 @@ import "./Sidebar.css";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   FiHome,
   FiBriefcase,
@@ -10,12 +11,15 @@ import {
   FiUser,
   FiSettings,
   FiBookmark,
+  FiZap,
 } from "react-icons/fi";
+import { cn } from "@/utils/helpers";
 
 const navItems = [
   { label: "Home", href: "/", icon: FiHome },
   { label: "Dashboard", href: "/dashboard", icon: FiBarChart2 },
   { label: "Applications", href: "/dashboard/applications", icon: FiBriefcase },
+  { label: "Taylor", href: "/dashboard/taylor", icon: FiZap },
   { label: "Saved Jobs", href: "/dashboard/saved", icon: FiBookmark },
   { label: "Profile", href: "/dashboard/profile", icon: FiUser },
   { label: "Settings", href: "/dashboard/settings", icon: FiSettings },
@@ -23,6 +27,15 @@ const navItems = [
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActiveRoute = (href: string) => {
+    if (href === "/" || href === "/dashboard") {
+      return pathname === href;
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   return (
     <aside className="sidebar">
@@ -50,7 +63,14 @@ export default function Sidebar() {
         {/* Nav Links */}
         <nav className={isOpen ? "sidebar__nav-open" : "sidebar__nav"}>
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className="sidebar__link">
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "sidebar__link",
+                isActiveRoute(item.href) && "sidebar__link--active",
+              )}
+            >
               <item.icon className="sidebar__link-icon" />
               <span className="sidebar__link-label">{item.label}</span>
             </Link>
