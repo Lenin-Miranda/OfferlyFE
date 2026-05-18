@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
+  FiActivity,
   FiHome,
   FiBriefcase,
   FiBarChart2,
@@ -18,6 +19,7 @@ import { cn } from "@/utils/helpers";
 const navItems = [
   { label: "Home", href: "/", icon: FiHome },
   { label: "Dashboard", href: "/dashboard", icon: FiBarChart2 },
+  { label: "Analytics", href: "/dashboard/analytics", icon: FiActivity },
   { label: "Applications", href: "/dashboard/applications", icon: FiBriefcase },
   { label: "Taylor", href: "/dashboard/taylor", icon: FiZap },
   { label: "Saved Jobs", href: "/dashboard/saved", icon: FiBookmark },

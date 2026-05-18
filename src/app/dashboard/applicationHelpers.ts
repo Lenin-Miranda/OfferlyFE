@@ -10,6 +10,21 @@ export interface KanbanColumnConfig {
   icon: IconType;
 }
 
+export interface PipelineDistributionItem {
+  id: string;
+  label: string;
+  count: number;
+  percentage: number;
+  color: KanbanColumnConfig["color"];
+}
+
+export interface AnalyticsSnapshot {
+  total: number;
+  active: number;
+  inProgress: number;
+  offers: number;
+}
+
 export const CLOSED_STATUSES = [
   ApplicationStatus.REJECTED,
   ApplicationStatus.ACCEPTED,
@@ -180,6 +195,73 @@ export function getApplicationOverviewStats(applications: Application[]) {
     interviewing,
     closed,
   };
+}
+
+export function getAnalyticsSnapshot(
+  applications: Application[],
+): AnalyticsSnapshot {
+  return {
+    total: applications.length,
+    active: applications.filter(
+      (application) => !CLOSED_STATUSES.includes(application.status),
+    ).length,
+    inProgress: applications.filter((application) =>
+      IN_PROGRESS_STATUSES.includes(application.status),
+    ).length,
+    offers: applications.filter(
+      (application) => application.status === ApplicationStatus.OFFER,
+    ).length,
+  };
+}
+
+export function getPipelineDistribution(
+  applications: Application[],
+): PipelineDistributionItem[] {
+  const total = applications.length;
+
+  return kanbanColumns.map((column) => {
+    const count = getApplicationsByStatuses(applications, column.statuses).length;
+    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+
+    return {
+      id: column.id,
+      label: column.title,
+      count,
+      percentage,
+      color: column.color,
+    };
+  });
+}
+
+export function getRecentActivityCount(
+  applications: Application[],
+  days = 14,
+) {
+  const timeWindow = days * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  return applications.filter((application) => {
+    const activityDate = application.updatedAt || application.createdAt;
+    const timestamp = new Date(activityDate).getTime();
+
+    if (Number.isNaN(timestamp)) {
+      return false;
+    }
+
+    return now - timestamp <= timeWindow;
+  }).length;
+}
+
+export function getTopPipelineStage(applications: Application[]) {
+  const distribution = getPipelineDistribution(applications);
+
+  if (distribution.length === 0) {
+    return null;
+  }
+
+  return distribution.reduce((topStage, currentStage) =>
+    currentStage.count > topStage.count ? currentStage : topStage,
+  );
 }
 
 export function getRecentApplications(applications: Application[], limit = 4) {
