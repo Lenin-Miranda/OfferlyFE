@@ -449,6 +449,10 @@
   gap: 8px;
 }
 
+.applications-page__ltc-card {
+  margin-top: 4px;
+}
+
 .applications-page__detail-item {
   display: flex;
   align-items: center;

@@ -23,7 +23,7 @@
   background: #fff;
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  max-width: 600px;
+  max-width: 780px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
@@ -89,7 +89,7 @@
 }
 
 .modal__form-container {
-  max-height: 400px;
+  max-height: 68vh;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 8px;
@@ -203,6 +203,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .modal__form-textarea::placeholder {
   color: #999;
+}
+
+.modal__form-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(17, 24, 39, 0.62);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.modal__form-hint svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* ========= Form Actions ========= */

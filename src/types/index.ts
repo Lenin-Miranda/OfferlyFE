@@ -16,30 +16,60 @@ export interface AuthContextType {
 export interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: ApplicationFormData) => void;
+  onSubmit: (data: ApplicationFormData) => void | Promise<void>;
   initialData?: Partial<Application> | null;
   mode?: "create" | "edit";
 }
 
 export interface ApplicationContextType {
   applications: Application[];
-  addApplication: (
-    applicationData: Omit<
-      Application,
-      "id" | "userId" | "createdAt" | "updatedAt"
-    >,
-  ) => Promise<Application>;
+  addApplication: (applicationData: ApplicationPayload) => Promise<Application>;
   deleteApplication: (id: string) => Promise<void>;
   editApplication: (
     id: string,
-    updates: Partial<
-      Omit<Application, "id" | "userId" | "createdAt" | "updatedAt">
-    >,
+    updates: Partial<ApplicationPayload>,
   ) => Promise<Application>;
   isMessage: string;
   setIsMessage: (message: string) => void;
   messageType: "success" | "error" | "info";
   setMessageType: (type: "success" | "error" | "info") => void;
+}
+
+export type RemotePreference =
+  | "remote"
+  | "hybrid"
+  | "onsite"
+  | "flexible"
+  | "unspecified";
+
+export interface Profile {
+  userId: string;
+  email: string;
+  fullName: string;
+  location: string;
+  summary: string;
+  skills: string[];
+  yearsExperience: number;
+  targetRoles: string[];
+  preferredLocations: string[];
+  remotePreference: RemotePreference;
+  workAuthorization: string;
+}
+
+export type ProfileUpdatePayload = Partial<
+  Omit<Profile, "userId" | "email">
+>;
+
+export type LtcRecommendation = "apply" | "consider" | "skip";
+
+export interface LtcAnalysis {
+  score: number;
+  recommendation: LtcRecommendation | string;
+  summary: string;
+  matchedSignals: string[];
+  gaps: string[];
+  missingProfileSignals: string[];
+  generatedAt: string;
 }
 
 export interface Application {
@@ -55,15 +85,30 @@ export interface Application {
   jobUrl?: string;
   description?: string;
   notes?: string;
-  appliedAt?: string;
+  appliedAt?: string | null;
   createdAt: string;
   updatedAt: string;
+  ltcAnalysis?: LtcAnalysis | null;
+  analysisSkippedReason?: string | null;
 }
 
-export type ApplicationFormData = Partial<Application> &
-  Pick<Application, "company" | "position" | "status"> & {
-    _id?: string;
-  };
+export interface ApplicationPayload {
+  company: string;
+  position: string;
+  status: ApplicationStatus;
+  location?: string;
+  salary?: number;
+  currency?: string;
+  jobUrl?: string;
+  description?: string;
+  notes?: string;
+  appliedAt?: string | null;
+}
+
+export type ApplicationFormData = ApplicationPayload & {
+  _id?: string;
+  id?: string;
+};
 
 export enum ApplicationStatus {
   SAVED = "saved",

@@ -4,6 +4,7 @@ import { Application, ApplicationStatus } from "@/types";
 import {
   FiX,
   FiBriefcase,
+  FiInfo,
   FiMapPin,
   FiDollarSign,
   FiLink,
@@ -13,6 +14,7 @@ import {
 } from "react-icons/fi";
 import "./ApplicationModal.css";
 import { ApplicationModalProps } from "@/types";
+import LtcScoreCard from "./LtcScoreCard";
 
 function getInitialFormData(initialData?: Partial<Application> | null) {
   return {
@@ -20,7 +22,8 @@ function getInitialFormData(initialData?: Partial<Application> | null) {
     position: initialData?.position || "",
     status: initialData?.status || ApplicationStatus.SAVED,
     location: initialData?.location || "",
-    salary: initialData?.salary ? String(initialData.salary) : "",
+    salary:
+      typeof initialData?.salary === "number" ? String(initialData.salary) : "",
     currency: initialData?.currency || "USD",
     jobUrl: initialData?.jobUrl || "",
     description: initialData?.description || "",
@@ -93,7 +96,7 @@ function ApplicationModalContent({
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const submitData = {
       ...formData,
@@ -101,13 +104,18 @@ function ApplicationModalContent({
         initialData && {
           _id: initialData._id || initialData.id,
         }),
-      salary: formData.salary ? Number(formData.salary) : undefined,
+      salary: formData.salary === "" ? undefined : Number(formData.salary),
       appliedAt: formData.appliedAt
         ? new Date(formData.appliedAt).toISOString()
         : undefined,
     };
-    onSubmit(submitData);
-    handleClose();
+
+    try {
+      await onSubmit(submitData);
+      handleClose();
+    } catch {
+      return;
+    }
   };
 
   const handleInputChange = (
@@ -282,6 +290,10 @@ function ApplicationModalContent({
                 rows={3}
                 placeholder="Job description, requirements, etc."
               />
+              <span className="modal__form-hint">
+                <FiInfo />
+                Adding the job description improves the ltcScore match analysis.
+              </span>
             </label>
 
             <label className="modal__form-label">
@@ -296,6 +308,10 @@ function ApplicationModalContent({
                 placeholder="Personal notes, interview experience, etc."
               />
             </label>
+
+            {initialData ? (
+              <LtcScoreCard application={initialData as Application} />
+            ) : null}
           </div>
 
           <div className="modal__form-actions">

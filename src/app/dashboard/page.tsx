@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   FiArrowRight,
-  FiBarChart2,
   FiBriefcase,
   FiCheckCircle,
   FiClock,
@@ -15,12 +14,10 @@ import Sidebar from "./components/Sidebar";
 import ApplicationModal from "./components/ApplicationModal";
 import MessageNotification from "./components/MessageNotification";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
-import {
-  ApplicationFormData,
-  ApplicationStatus,
-} from "@/types";
+import { ApplicationFormData, ApplicationStatus } from "@/types";
 import {
   formatApplicationDate,
+  getApplicationMutationSuccessMessage,
   getApplicationOverviewStats,
   getApplicationsByStatuses,
   getRecentApplications,
@@ -63,7 +60,8 @@ export default function Dashboard() {
       Math.max(
         1,
         ...kanbanColumns.map(
-          (column) => getApplicationsByStatuses(applications, column.statuses).length,
+          (column) =>
+            getApplicationsByStatuses(applications, column.statuses).length,
         ),
       ),
     [applications],
@@ -75,17 +73,20 @@ export default function Dashboard() {
       setIsMessage(
         "Please fill in all required fields: Company, Position, and Status.",
       );
-      return;
+      throw new Error("Missing required application fields");
     }
 
     try {
-      await addApplication(data);
+      const createdApplication = await addApplication(data);
       setMessageType("success");
-      setIsMessage("Application added successfully!");
+      setIsMessage(
+        getApplicationMutationSuccessMessage(createdApplication, "added"),
+      );
       setIsModalOpen(false);
     } catch {
       setMessageType("error");
       setIsMessage("We couldn't add the application. Please try again.");
+      throw new Error("Application creation failed");
     }
   };
 
@@ -95,7 +96,6 @@ export default function Dashboard() {
       <main className="dashboard-overview">
         <section className="dashboard-overview__hero" data-aos="fade-up">
           <div className="dashboard-overview__hero-copy">
-            <span className="dashboard-overview__eyebrow">Dashboard Overview</span>
             <h1 className="dashboard-overview__title">
               Keep your job search clear, focused, and moving forward
             </h1>
@@ -118,35 +118,6 @@ export default function Dashboard() {
                 Open Taylor
                 <FiZap />
               </Link>
-            </div>
-          </div>
-
-          <div
-            className="dashboard-overview__summary-card"
-            data-aos="fade-left"
-            data-aos-delay="120"
-          >
-            <div className="dashboard-overview__summary-top">
-              <FiBarChart2 />
-              <span>Pipeline snapshot</span>
-            </div>
-            <strong>{overviewStats.active}</strong>
-            <p>
-              Active opportunities across saved, applied, and in-progress stages.
-            </p>
-            <div className="dashboard-overview__summary-metrics">
-              <div>
-                <span>Total</span>
-                <strong>{overviewStats.total}</strong>
-              </div>
-              <div>
-                <span>Interviews</span>
-                <strong>{overviewStats.interviewing}</strong>
-              </div>
-              <div>
-                <span>Closed</span>
-                <strong>{overviewStats.closed}</strong>
-              </div>
             </div>
           </div>
         </section>
@@ -184,7 +155,7 @@ export default function Dashboard() {
                 <span className="dashboard-overview__panel-eyebrow">
                   Pipeline
                 </span>
-                <h2>Status snapshot</h2>
+                <h2 style={{ marginTop: "24px" }}>Status snapshot</h2>
               </div>
               <Link href="/dashboard/applications">Manage workspace</Link>
             </div>
@@ -205,9 +176,13 @@ export default function Dashboard() {
                     <div className="dashboard-overview__pipeline-top">
                       <div className="dashboard-overview__pipeline-label">
                         <column.icon />
-                        <span>{column.title}</span>
+                        <div className="dashboard-overview__pipeline-text">
+                          <span>{column.title}</span>
+                          <span className="dashboard-overview__pipeline-count">
+                            {count}
+                          </span>
+                        </div>
                       </div>
-                      <strong>{count}</strong>
                     </div>
                     <div className="dashboard-overview__pipeline-track">
                       <span
@@ -228,8 +203,12 @@ export default function Dashboard() {
           >
             <div className="dashboard-overview__panel-head">
               <div>
-                <span className="dashboard-overview__panel-eyebrow">Recent</span>
-                <h2>Latest application activity</h2>
+                <span className="dashboard-overview__panel-eyebrow">
+                  Recent
+                </span>
+                <h2 style={{ marginTop: "24px" }}>
+                  Latest application activity
+                </h2>
               </div>
               <Link href="/dashboard/applications">View all</Link>
             </div>
@@ -247,7 +226,9 @@ export default function Dashboard() {
                     </div>
                     <div className="dashboard-overview__recent-meta">
                       <span>
-                        {getStatusDisplayName(application.status as ApplicationStatus)}
+                        {getStatusDisplayName(
+                          application.status as ApplicationStatus,
+                        )}
                       </span>
                       <small>
                         {formatApplicationDate(
@@ -273,7 +254,9 @@ export default function Dashboard() {
           >
             <div className="dashboard-overview__panel-head">
               <div>
-                <span className="dashboard-overview__panel-eyebrow">Actions</span>
+                <span className="dashboard-overview__panel-eyebrow">
+                  Actions
+                </span>
                 <h2>Move your search forward</h2>
               </div>
             </div>
@@ -285,7 +268,9 @@ export default function Dashboard() {
               >
                 <FiBriefcase />
                 <strong>Applications workspace</strong>
-                <span>Track, edit, and review every opportunity in one board.</span>
+                <span>
+                  Track, edit, and review every opportunity in one board.
+                </span>
               </Link>
               <Link
                 href="/dashboard/taylor"
@@ -293,7 +278,9 @@ export default function Dashboard() {
               >
                 <FiZap />
                 <strong>Resume tailoring</strong>
-                <span>Adapt your resume to a job post and download the updated PDF.</span>
+                <span>
+                  Adapt your resume to a job post and download the updated PDF.
+                </span>
               </Link>
               <button
                 type="button"
@@ -302,7 +289,9 @@ export default function Dashboard() {
               >
                 <FiPlus />
                 <strong>Add new application</strong>
-                <span>Create a fresh application entry without leaving the overview.</span>
+                <span>
+                  Create a fresh application entry without leaving the overview.
+                </span>
               </button>
             </div>
           </article>

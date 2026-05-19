@@ -91,13 +91,18 @@
 }
 
 .resume-tailor-form__upload-card {
+  appearance: none;
   display: flex;
   align-items: center;
   gap: 16px;
   width: 100%;
   padding: 20px 0;
+  border: none;
   border-top: 1px dashed rgba(17, 24, 39, 0.18);
   border-bottom: 1px dashed rgba(17, 24, 39, 0.18);
+  background: transparent;
+  color: inherit;
+  font: inherit;
   cursor: pointer;
   text-align: left;
   transition: transform 0.25s ease, border-color 0.25s ease;

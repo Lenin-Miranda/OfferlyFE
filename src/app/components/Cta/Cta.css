@@ -63,7 +63,8 @@
 .cta__btn-primary {
   background-color: #000;
   color: #fff;
-  box-shadow: 0 0 20px rgba(255, 225, 238, 0.4),
+  box-shadow:
+    0 0 20px rgba(255, 225, 238, 0.4),
     0 0 40px rgba(254, 243, 208, 0.3);
   animation: pulse-glow 4s ease-in-out infinite;
 }
@@ -76,19 +77,22 @@
   background: linear-gradient(45deg, #ffe1ee, #fef3d0, #ffe1ee, #fef3d0);
   background-size: 300% 300%;
   z-index: -1;
-  animation: gradient-shift 5s ease infinite,
+  animation:
+    gradient-shift 5s ease infinite,
     border-pulse 4s ease-in-out infinite;
 }
 
 .cta__btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(255, 225, 238, 0.6),
+  box-shadow:
+    0 0 30px rgba(255, 225, 238, 0.6),
     0 0 60px rgba(254, 243, 208, 0.5);
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
 .cta__btn-primary:hover::before {
-  animation: gradient-shift 2.5s ease infinite,
+  animation:
+    gradient-shift 2.5s ease infinite,
     border-pulse 2s ease-in-out infinite;
 }
 
@@ -98,7 +102,8 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       600px 400px at 80% 30%,
       rgba(255, 225, 238, 0.6),
       transparent 70%
@@ -113,7 +118,6 @@
       rgba(255, 225, 238, 0.3),
       transparent 75%
     );
-  animation: bg-float 8s ease-in-out infinite;
 }
 
 .cta::after {
@@ -143,11 +147,13 @@
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(255, 225, 238, 0.4),
+    box-shadow:
+      0 0 20px rgba(255, 225, 238, 0.4),
       0 0 40px rgba(254, 243, 208, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 225, 238, 0.7),
+    box-shadow:
+      0 0 30px rgba(255, 225, 238, 0.7),
       0 0 60px rgba(254, 243, 208, 0.5);
   }
 }

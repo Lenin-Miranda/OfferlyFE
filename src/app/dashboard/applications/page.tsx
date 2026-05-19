@@ -16,12 +16,14 @@ import Sidebar from "../components/Sidebar";
 import ApplicationModal from "../components/ApplicationModal";
 import MessageNotification from "../components/MessageNotification";
 import ConfirmationMessage from "../components/ConfirmationMessage";
+import LtcScoreCard from "../components/LtcScoreCard";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
 import { Application, ApplicationFormData } from "@/types";
 import {
   applicationFocusFilters,
   ApplicationFocusFilter,
   formatApplicationDate,
+  getApplicationMutationSuccessMessage,
   getApplicationOverviewStats,
   getApplicationsByStatuses,
   getApplicationsForFocus,
@@ -117,7 +119,7 @@ export default function ApplicationsPage() {
       setIsMessage(
         "Please fill in all required fields: Company, Position, and Status.",
       );
-      return;
+      throw new Error("Missing required application fields");
     }
 
     if (editingApp) {
@@ -130,13 +132,16 @@ export default function ApplicationsPage() {
     }
 
     try {
-      await addApplication(data);
+      const createdApplication = await addApplication(data);
       setMessageType("success");
-      setIsMessage("Application added successfully!");
+      setIsMessage(
+        getApplicationMutationSuccessMessage(createdApplication, "added"),
+      );
       setIsModalOpen(false);
     } catch {
       setMessageType("error");
       setIsMessage("We couldn't add the application. Please try again.");
+      throw new Error("Application creation failed");
     }
   };
 
@@ -327,6 +332,13 @@ export default function ApplicationsPage() {
                               </span>
                             </div>
                           </div>
+
+                          <LtcScoreCard
+                            application={application}
+                            compact
+                            onEditApplication={handleEditClick}
+                            className="applications-page__ltc-card"
+                          />
 
                           <div className="applications-page__card-actions">
                             <button

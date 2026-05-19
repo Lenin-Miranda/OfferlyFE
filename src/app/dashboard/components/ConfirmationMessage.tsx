@@ -1,7 +1,8 @@
 "use client";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Application } from "@/types";
+import { ApplicationPayload } from "@/types";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
+import { getApplicationMutationSuccessMessage } from "../applicationHelpers";
 import "./ConfirmationMessage.css";
 
 export default function ConfirmationMessage({
@@ -17,9 +18,7 @@ export default function ConfirmationMessage({
   onClose: () => void;
   mode?: "delete" | "edit";
   id: string;
-  changes: Partial<
-    Omit<Application, "id" | "userId" | "createdAt" | "updatedAt">
-  >;
+  changes: Partial<ApplicationPayload>;
 }) {
   const { deleteApplication, editApplication, setIsMessage, setMessageType } =
     useContext(ApplicationContext);
@@ -66,9 +65,11 @@ export default function ConfirmationMessage({
         setMessageType("success");
         setIsMessage("Application deleted successfully!");
       } else {
-        await editApplication(id, changes);
+        const updatedApplication = await editApplication(id, changes);
         setMessageType("success");
-        setIsMessage("Application updated successfully!");
+        setIsMessage(
+          getApplicationMutationSuccessMessage(updatedApplication, "updated"),
+        );
       }
       handleClose();
     } catch {

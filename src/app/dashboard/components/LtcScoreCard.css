@@ -1,0 +1,228 @@
+.ltc-score-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
+}
+
+.ltc-score-card--compact {
+  padding: 12px;
+  gap: 10px;
+}
+
+.ltc-score-card--success {
+  background: linear-gradient(
+    180deg,
+    rgba(236, 253, 245, 0.92) 0%,
+    rgba(255, 255, 255, 0.88) 100%
+  );
+}
+
+.ltc-score-card--warning {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 251, 235, 0.94) 0%,
+    rgba(255, 255, 255, 0.88) 100%
+  );
+}
+
+.ltc-score-card--danger {
+  background: linear-gradient(
+    180deg,
+    rgba(254, 242, 242, 0.94) 0%,
+    rgba(255, 255, 255, 0.88) 100%
+  );
+}
+
+.ltc-score-card--neutral,
+.ltc-score-card--empty {
+  background: linear-gradient(
+    180deg,
+    rgba(248, 250, 252, 0.94) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+}
+
+.ltc-score-card__header,
+.ltc-score-card__score-wrap,
+.ltc-score-card__title-wrap {
+  display: flex;
+}
+
+.ltc-score-card__header {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ltc-score-card__title-wrap {
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ltc-score-card__eyebrow {
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.06);
+  color: rgba(17, 24, 39, 0.62);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ltc-score-card__title-wrap strong {
+  color: #111827;
+  font-size: 1rem;
+}
+
+.ltc-score-card__score-wrap {
+  align-items: center;
+  gap: 10px;
+}
+
+.ltc-score-card__score {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(17, 24, 39, 0.06);
+  color: #111827;
+  font-weight: 800;
+}
+
+.ltc-score-card__score svg,
+.ltc-score-card__empty-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.ltc-score-card__score span {
+  font-size: 1rem;
+}
+
+.ltc-score-card__empty-icon {
+  color: rgba(17, 24, 39, 0.54);
+  margin-top: 8px;
+}
+
+.ltc-score-card__badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ltc-score-card__badge--success {
+  background: rgba(16, 185, 129, 0.16);
+  color: #047857;
+}
+
+.ltc-score-card__badge--warning {
+  background: rgba(245, 158, 11, 0.16);
+  color: #b45309;
+}
+
+.ltc-score-card__badge--danger {
+  background: rgba(239, 68, 68, 0.14);
+  color: #b91c1c;
+}
+
+.ltc-score-card__badge--neutral {
+  background: rgba(148, 163, 184, 0.16);
+  color: #475569;
+}
+
+.ltc-score-card__summary,
+.ltc-score-card__caption,
+.ltc-score-card__signal-empty {
+  margin: 0;
+}
+
+.ltc-score-card__summary {
+  color: #111827;
+  line-height: 1.55;
+}
+
+.ltc-score-card__caption,
+.ltc-score-card__signal-empty {
+  color: rgba(17, 24, 39, 0.58);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.ltc-score-card__signals {
+  display: grid;
+  gap: 10px;
+}
+
+.ltc-score-card__signal-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ltc-score-card__signal-label {
+  color: rgba(17, 24, 39, 0.68);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ltc-score-card__signal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ltc-score-card__signal-item {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.06);
+  color: rgba(17, 24, 39, 0.8);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.ltc-score-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #111827;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.ltc-score-card__cta--button {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+@media (max-width: 640px) {
+  .ltc-score-card__header,
+  .ltc-score-card__score-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

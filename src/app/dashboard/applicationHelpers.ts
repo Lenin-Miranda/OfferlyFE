@@ -87,13 +87,16 @@ export const applicationFocusFilters = [
   },
 ] as const;
 
-export type ApplicationFocusFilter = (typeof applicationFocusFilters)[number]["id"];
+export type ApplicationFocusFilter =
+  (typeof applicationFocusFilters)[number]["id"];
 
 export function getApplicationsByStatuses(
   applications: Application[],
   statuses: ApplicationStatus[],
 ) {
-  return applications.filter((application) => statuses.includes(application.status));
+  return applications.filter((application) =>
+    statuses.includes(application.status),
+  );
 }
 
 export function getApplicationsForFocus(
@@ -152,6 +155,10 @@ export function getStatusClass(status: ApplicationStatus) {
     case ApplicationStatus.OFFER:
       return "status-offer";
     case ApplicationStatus.REJECTED:
+      return "status-rejected";
+    case ApplicationStatus.ACCEPTED:
+      return "status-offer";
+    case ApplicationStatus.WITHDRAWN:
       return "status-rejected";
     case ApplicationStatus.GHOSTED:
       return "status-ghosted";
@@ -220,7 +227,10 @@ export function getPipelineDistribution(
   const total = applications.length;
 
   return kanbanColumns.map((column) => {
-    const count = getApplicationsByStatuses(applications, column.statuses).length;
+    const count = getApplicationsByStatuses(
+      applications,
+      column.statuses,
+    ).length;
     const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
 
     return {
@@ -233,10 +243,7 @@ export function getPipelineDistribution(
   });
 }
 
-export function getRecentActivityCount(
-  applications: Application[],
-  days = 14,
-) {
+export function getRecentActivityCount(applications: Application[], days = 14) {
   const timeWindow = days * 24 * 60 * 60 * 1000;
   const now = Date.now();
 
@@ -286,6 +293,29 @@ export function matchesApplicationSearch(
   return [application.company, application.position, application.location]
     .filter(Boolean)
     .some((value) => value?.toLowerCase().includes(normalizedQuery));
+}
+
+export function getApplicationMutationSuccessMessage(
+  application: Application,
+  action: "added" | "updated",
+) {
+  const actionLabel =
+    action === "added" ? "Application added successfully." : "Application updated successfully.";
+
+  if (application.ltcAnalysis) {
+    return `${actionLabel} Match score refreshed.`;
+  }
+
+  switch (application.analysisSkippedReason) {
+    case "missing_job_description":
+      return `${actionLabel} Add the job description to get a match score.`;
+    case "insufficient_profile":
+      return `${actionLabel} Complete your profile to unlock match analysis.`;
+    case "analysis_failed":
+      return `${actionLabel} Match analysis is temporarily unavailable.`;
+    default:
+      return actionLabel;
+  }
 }
 
 export type { ApplicationFormData };

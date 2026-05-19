@@ -16,7 +16,8 @@
   inset: 0;
   height: 100%;
   z-index: 0;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       700px 500px at 100% 25%,
       rgba(255, 210, 90, 0.45),
       transparent 80%
@@ -203,9 +204,11 @@
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: #fff;
+
   transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
+  transition:
+    width 0.6s ease,
+    height 0.6s ease;
   z-index: 0;
   color: #000;
 }

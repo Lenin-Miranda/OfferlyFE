@@ -7,7 +7,7 @@ import {
   deleteApplication,
   addApplication,
 } from "@/lib/application";
-import { Application } from "@/types";
+import { Application, ApplicationPayload } from "@/types";
 
 export function ApplicationProvider({
   children,
@@ -44,10 +44,7 @@ export function ApplicationProvider({
   };
 
   const handleAddApplication = async (
-    applicationData: Omit<
-      Application,
-      "id" | "userId" | "createdAt" | "updatedAt"
-    >,
+    applicationData: ApplicationPayload,
   ): Promise<Application> => {
     try {
       const newApplication = await addApplication(applicationData);
@@ -61,9 +58,7 @@ export function ApplicationProvider({
 
   const handleEditApplication = async (
     id: string,
-    updates: Partial<
-      Omit<Application, "id" | "userId" | "createdAt" | "updatedAt">
-    >,
+    updates: Partial<ApplicationPayload>,
   ): Promise<Application> => {
     try {
       const updatedApplication = await editApplication(id, updates);

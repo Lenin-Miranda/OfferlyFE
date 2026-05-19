@@ -113,22 +113,32 @@
 
 .taylor-page__guidance-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 14px;
-  width: fit-content;
-  max-width: min(100%, 860px);
-  padding: 0 0 16px;
-  border-bottom: 1px solid rgba(17, 24, 39, 0.1);
+  width: min(100%, 860px);
+  margin: 0 auto;
+  padding: 20px 24px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: center;
 }
 
 .taylor-page__guidance-card svg {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  color: #fff;
+  background: #111827;
+  padding: 10px;
+  border-radius: 999px;
+  box-sizing: content-box;
 }
 
 .taylor-page__guidance-card p {
   margin: 0;
+  max-width: 62ch;
   color: rgba(17, 24, 39, 0.72);
   line-height: 1.65;
 }
@@ -167,6 +177,6 @@
 
   .taylor-page__guidance-card {
     width: 100%;
-    align-items: flex-start;
+    padding: 18px;
   }
 }

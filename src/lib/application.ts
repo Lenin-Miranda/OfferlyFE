@@ -1,6 +1,6 @@
 import axios from "axios";
 import { api } from "./axios";
-import { Application, ResumeTailorResponse } from "@/types";
+import { Application, ApplicationPayload, ResumeTailorResponse } from "@/types";
 
 interface ApplicationApiRecord extends Omit<Application, "id"> {
   _id?: string;
@@ -11,13 +11,26 @@ interface ApplicationsResponse {
   apps?: ApplicationApiRecord[];
 }
 
+function normalizeApplication(app: ApplicationApiRecord): Application {
+  return {
+    ...app,
+    id: app._id ?? app.id ?? "",
+    userId: app.userId ?? "",
+    status: app.status,
+    company: app.company ?? "",
+    position: app.position ?? "",
+    createdAt: app.createdAt ?? "",
+    updatedAt: app.updatedAt ?? "",
+    appliedAt: app.appliedAt ?? null,
+    ltcAnalysis: app.ltcAnalysis ?? null,
+    analysisSkippedReason: app.analysisSkippedReason ?? null,
+  };
+}
+
 export const getApplications = async (): Promise<Application[]> => {
   try {
     const response = await api.get<ApplicationsResponse>("/applications");
-    return (response.data?.apps || []).map((app) => ({
-      ...app,
-      id: app._id ?? app.id ?? "",
-    }));
+    return (response.data?.apps || []).map(normalizeApplication);
   } catch (e) {
     console.error(`Error Getting applications:`, e);
     return [];
@@ -25,14 +38,14 @@ export const getApplications = async (): Promise<Application[]> => {
 };
 
 export async function addApplication(
-  applicationData: Omit<
-    Application,
-    "id" | "userId" | "createdAt" | "updatedAt"
-  >,
+  applicationData: ApplicationPayload,
 ): Promise<Application> {
   try {
-    const response = await api.post("/applications", applicationData);
-    return response.data.app;
+    const response = await api.post<{ app: ApplicationApiRecord }>(
+      "/applications",
+      applicationData,
+    );
+    return normalizeApplication(response.data.app);
   } catch (error) {
     console.error("Error adding application:", error);
     throw error;
@@ -51,13 +64,14 @@ export async function deleteApplication(id: string): Promise<void> {
 
 export async function editApplication(
   id: string,
-  updates: Partial<
-    Omit<Application, "id" | "userId" | "createdAt" | "updatedAt">
-  >,
+  updates: Partial<ApplicationPayload>,
 ): Promise<Application> {
   try {
-    const res = await api.patch(`/applications/${id}`, updates);
-    return res.data.app;
+    const res = await api.patch<{ app: ApplicationApiRecord }>(
+      `/applications/${id}`,
+      updates,
+    );
+    return normalizeApplication(res.data.app);
   } catch (e) {
     console.error("Error updating info:", e);
     throw new Error();
