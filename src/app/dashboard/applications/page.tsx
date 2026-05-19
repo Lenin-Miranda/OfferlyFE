@@ -14,6 +14,8 @@ import {
 } from "react-icons/fi";
 import Sidebar from "../components/Sidebar";
 import ApplicationModal from "../components/ApplicationModal";
+import ErrorMessage from "@/app/components/ErrorMessage/ErrorMessage";
+import SuccessMessage from "@/app/components/SuccessMessage/SuccessMessage";
 import MessageNotification from "../components/MessageNotification";
 import ConfirmationMessage from "../components/ConfirmationMessage";
 import LtcScoreCard from "../components/LtcScoreCard";
@@ -384,10 +386,18 @@ export default function ApplicationsPage() {
         initialData={editingApp}
       />
 
-      {isMessage ? (
+      {isMessage && messageType === "success" ? (
+        <SuccessMessage message={isMessage} onClose={() => setIsMessage("")} />
+      ) : null}
+
+      {isMessage && messageType === "error" ? (
+        <ErrorMessage message={isMessage} onClose={() => setIsMessage("")} />
+      ) : null}
+
+      {isMessage && messageType === "info" ? (
         <MessageNotification
           message={isMessage}
-          type={messageType}
+          type="info"
           onClose={() => setIsMessage("")}
         />
       ) : null}

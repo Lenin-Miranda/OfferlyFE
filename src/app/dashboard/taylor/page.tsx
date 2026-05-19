@@ -7,6 +7,8 @@ import {
   FiFileText,
   FiTarget,
 } from "react-icons/fi";
+import ErrorMessage from "@/app/components/ErrorMessage/ErrorMessage";
+import { ErrorContext } from "@/contexts/ErrorContext";
 import Sidebar from "../components/Sidebar";
 import ResumeTailorForm from "../components/ResumeTailorForm";
 import ResumeTailorResult from "../components/ResumeTailorResult";
@@ -17,6 +19,7 @@ import "./page.css";
 
 export default function TaylorPage() {
   const { applications } = useContext(ApplicationContext);
+  const { setErrorMessage, isOpen, setIsOpen } = useContext(ErrorContext);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [jobPost, setJobPost] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -47,6 +50,17 @@ export default function TaylorPage() {
   );
 
   const displayedError = formError ?? error;
+
+  useEffect(() => {
+    if (displayedError) {
+      setErrorMessage(displayedError);
+      setIsOpen(true);
+      return;
+    }
+
+    setErrorMessage("");
+    setIsOpen(false);
+  }, [displayedError, setErrorMessage, setIsOpen]);
 
   const handleFileChange = (file: File | null) => {
     clearError();
@@ -161,7 +175,6 @@ export default function TaylorPage() {
               selectedFile={selectedFile}
               jobPost={jobPost}
               isSubmitting={isLoading}
-              errorMessage={displayedError}
               onFileChange={handleFileChange}
               onJobPostChange={setJobPost}
               onSubmit={handleSubmit}
@@ -185,6 +198,8 @@ export default function TaylorPage() {
           </div>
         </section>
       </main>
+
+      {isOpen ? <ErrorMessage /> : null}
     </>
   );
 }

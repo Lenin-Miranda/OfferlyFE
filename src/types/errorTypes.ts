@@ -6,7 +6,8 @@ interface ErrorContextType {
 }
 
 interface ErrorMessageProps {
-  message: string;
+  message?: string;
+  onClose?: () => void;
 }
 
 export type { ErrorContextType, ErrorMessageProps };

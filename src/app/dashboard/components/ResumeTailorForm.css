@@ -204,22 +204,6 @@
   line-height: 1.6;
 }
 
-.resume-tailor-form__error {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(239, 68, 68, 0.18);
-  color: #b91c1c;
-}
-
-.resume-tailor-form__error svg {
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  margin-top: 2px;
-}
-
 .resume-tailor-form__actions {
   display: flex;
   align-items: center;

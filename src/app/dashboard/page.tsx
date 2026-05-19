@@ -11,6 +11,8 @@ import {
   FiZap,
 } from "react-icons/fi";
 import Sidebar from "./components/Sidebar";
+import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
+import SuccessMessage from "../components/SuccessMessage/SuccessMessage";
 import ApplicationModal from "./components/ApplicationModal";
 import MessageNotification from "./components/MessageNotification";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
@@ -305,10 +307,18 @@ export default function Dashboard() {
         mode="create"
       />
 
-      {isMessage ? (
+      {isMessage && messageType === "success" ? (
+        <SuccessMessage message={isMessage} onClose={() => setIsMessage("")} />
+      ) : null}
+
+      {isMessage && messageType === "error" ? (
+        <ErrorMessage message={isMessage} onClose={() => setIsMessage("")} />
+      ) : null}
+
+      {isMessage && messageType === "info" ? (
         <MessageNotification
           message={isMessage}
-          type={messageType}
+          type="info"
           onClose={() => setIsMessage("")}
         />
       ) : null}

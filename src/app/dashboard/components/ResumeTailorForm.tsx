@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef } from "react";
 import {
-  FiAlertCircle,
   FiCheckCircle,
   FiFileText,
   FiRefreshCcw,
@@ -15,7 +14,6 @@ interface ResumeTailorFormProps {
   selectedFile: File | null;
   jobPost: string;
   isSubmitting: boolean;
-  errorMessage: string | null;
   onFileChange: (file: File | null) => void;
   onJobPostChange: (value: string) => void;
   onSubmit: () => void;
@@ -26,7 +24,6 @@ export default function ResumeTailorForm({
   selectedFile,
   jobPost,
   isSubmitting,
-  errorMessage,
   onFileChange,
   onJobPostChange,
   onSubmit,
@@ -136,13 +133,6 @@ export default function ResumeTailorForm({
           keywords, and experience with better precision.
         </p>
       </div>
-
-      {errorMessage ? (
-        <div className="resume-tailor-form__error" role="alert">
-          <FiAlertCircle />
-          <span>{errorMessage}</span>
-        </div>
-      ) : null}
 
       <div className="resume-tailor-form__actions">
         <button

@@ -1,26 +1,41 @@
-import { useContext, useEffect } from "react";
-import "./ErrorMessage.css";
+import { useCallback, useContext, useEffect } from "react";
 import { ErrorMessageProps } from "@/types/errorTypes";
-import { CgClose } from "react-icons/cg";
 import { ErrorContext } from "@/contexts/ErrorContext";
+import FeedbackMessage from "../FeedbackMessage/FeedbackMessage";
 
-export default function ErrorMessage({ message }: ErrorMessageProps) {
-  const { setIsOpen } = useContext(ErrorContext);
+export default function ErrorMessage({ message, onClose }: ErrorMessageProps) {
+  const { errorMessage, setIsOpen } = useContext(ErrorContext);
+  const displayedMessage = message || errorMessage;
+  const handleClose = useCallback(() => {
+    if (onClose) {
+      onClose();
+      return;
+    }
+
+    setIsOpen(false);
+  }, [onClose, setIsOpen]);
 
   useEffect(() => {
+    if (!displayedMessage) {
+      return;
+    }
+
     const timeoutId = window.setTimeout(() => {
-      setIsOpen(false);
+      handleClose();
     }, 5000);
 
     return () => window.clearTimeout(timeoutId);
-  }, [setIsOpen]);
+  }, [displayedMessage, handleClose]);
+
+  if (!displayedMessage) {
+    return null;
+  }
 
   return (
-    <div className="error__message">
-      <p className="error__message-text">{message}</p>
-      <button onClick={() => setIsOpen(false)} className="error__message-close">
-        <CgClose />
-      </button>
-    </div>
+    <FeedbackMessage
+      message={displayedMessage}
+      type="error"
+      onClose={handleClose}
+    />
   );
 }

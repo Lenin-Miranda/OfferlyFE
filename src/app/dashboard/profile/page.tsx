@@ -22,6 +22,8 @@ import {
   FiTarget,
   FiUser,
 } from "react-icons/fi";
+import ErrorMessage from "@/app/components/ErrorMessage/ErrorMessage";
+import SuccessMessage from "@/app/components/SuccessMessage/SuccessMessage";
 import Sidebar from "../components/Sidebar";
 import MessageNotification from "../components/MessageNotification";
 import {
@@ -579,10 +581,24 @@ export default function ProfilePage() {
         ) : null}
       </main>
 
-      {notification ? (
+      {notification?.type === "success" ? (
+        <SuccessMessage
+          message={notification.message}
+          onClose={() => setNotification(null)}
+        />
+      ) : null}
+
+      {notification?.type === "error" ? (
+        <ErrorMessage
+          message={notification.message}
+          onClose={() => setNotification(null)}
+        />
+      ) : null}
+
+      {notification?.type === "info" ? (
         <MessageNotification
           message={notification.message}
-          type={notification.type}
+          type="info"
           onClose={() => setNotification(null)}
         />
       ) : null}

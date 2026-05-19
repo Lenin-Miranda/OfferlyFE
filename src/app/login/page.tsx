@@ -145,7 +145,7 @@ export default function Login() {
           </button>
         </div>
       </form>
-      {isOpen && <ErrorMessage message={errorMessage} />}
+      {isOpen && errorMessage ? <ErrorMessage /> : null}
       <div className="login__ctn">
         <h2
           className={!isRegister ? "login__ctn-title" : "login__ctn-title-hide"}
