@@ -33,7 +33,7 @@ import ErrorMessage from "@/app/components/ErrorMessage/ErrorMessage";
 import SuccessMessage from "@/app/components/SuccessMessage/SuccessMessage";
 import MessageNotification from "../components/MessageNotification";
 import ConfirmationMessage from "../components/ConfirmationMessage";
-import LtcScoreCard from "../components/LtcScoreCard";
+import LtcScoreModal from "../components/LtcScoreModal";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
 import { Application, ApplicationFormData } from "@/types";
 import {
@@ -74,13 +74,15 @@ function ApplicationCardContent({
   application,
   onEditApplication,
   onDeleteApplication,
-  showInsights = true,
+  onOpenLtcScore,
+  showLtcPrompt = true,
   showActions = true,
 }: {
   application: Application;
   onEditApplication?: (application: Application) => void;
   onDeleteApplication?: (applicationId: string, companyName: string) => void;
-  showInsights?: boolean;
+  onOpenLtcScore?: (application: Application) => void;
+  showLtcPrompt?: boolean;
   showActions?: boolean;
 }) {
   return (
@@ -126,13 +128,22 @@ function ApplicationCardContent({
         </div>
       </div>
 
-      {showInsights ? (
-        <LtcScoreCard
-          application={application}
-          compact
-          onEditApplication={onEditApplication}
-          className="applications-page__ltc-card"
-        />
+      {showLtcPrompt && onOpenLtcScore ? (
+        <div className="applications-page__ltc-prompt">
+          <button
+            type="button"
+            className="applications-page__ltc-trigger"
+            onPointerDown={(event) => {
+              event.stopPropagation();
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpenLtcScore(application);
+            }}
+          >
+            Click here to check your LTC score
+          </button>
+        </div>
       ) : null}
 
       {showActions && onEditApplication && onDeleteApplication ? (
@@ -168,12 +179,14 @@ function DraggableApplicationCard({
   isActive,
   onEditApplication,
   onDeleteApplication,
+  onOpenLtcScore,
 }: {
   application: Application;
   isUpdating: boolean;
   isActive: boolean;
   onEditApplication: (application: Application) => void;
   onDeleteApplication: (applicationId: string, companyName: string) => void;
+  onOpenLtcScore: (application: Application) => void;
 }) {
   const applicationId = getApplicationIdentifier(application);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -200,6 +213,7 @@ function DraggableApplicationCard({
         application={application}
         onEditApplication={onEditApplication}
         onDeleteApplication={onDeleteApplication}
+        onOpenLtcScore={onOpenLtcScore}
       />
     </div>
   );
@@ -267,6 +281,8 @@ export default function ApplicationsPage() {
     isOpen: boolean;
     appData: ApplicationFormData;
   } | null>(null);
+  const [ltcModalApplication, setLtcModalApplication] =
+    useState<Application | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [focusFilter, setFocusFilter] =
     useState<ApplicationFocusFilter>("all");
@@ -357,6 +373,14 @@ export default function ApplicationsPage() {
   const handleDeleteClick = (applicationId: string, companyName: string) => {
     setSelectedAppForDelete({ id: applicationId, company: companyName });
     setIsMessageOpen(true);
+  };
+
+  const handleOpenLtcScore = (application: Application) => {
+    setLtcModalApplication(application);
+  };
+
+  const handleCloseLtcScore = () => {
+    setLtcModalApplication(null);
   };
 
   const moveApplicationToColumn = async (
@@ -649,6 +673,7 @@ export default function ApplicationsPage() {
                             }
                             onEditApplication={handleEditClick}
                             onDeleteApplication={handleDeleteClick}
+                            onOpenLtcScore={handleOpenLtcScore}
                           />
                         ))
                       ) : (
@@ -671,7 +696,7 @@ export default function ApplicationsPage() {
                   <div className="applications-page__drag-overlay">
                     <ApplicationCardContent
                       application={activeApplication}
-                      showInsights={false}
+                      showLtcPrompt={false}
                       showActions={false}
                     />
                   </div>
@@ -688,6 +713,12 @@ export default function ApplicationsPage() {
         onSubmit={handleModalSubmit}
         mode="edit"
         initialData={editingApp}
+      />
+
+      <LtcScoreModal
+        application={ltcModalApplication}
+        isOpen={Boolean(ltcModalApplication)}
+        onClose={handleCloseLtcScore}
       />
 
       {isMessage && messageType === "success" ? (

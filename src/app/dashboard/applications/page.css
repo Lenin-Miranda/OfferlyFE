@@ -403,6 +403,7 @@
     opacity 0.2s ease,
     border-color 0.22s ease,
     background-color 0.22s ease;
+  position: relative;
 }
 
 .applications-page__card:hover {
@@ -518,8 +519,64 @@
   gap: 8px;
 }
 
-.applications-page__ltc-card {
-  margin-top: 4px;
+.applications-page__ltc-prompt {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    max-height 1s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 1s ease,
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.applications-page__ltc-trigger {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.03);
+  color: rgba(17, 24, 39, 0.72);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.applications-page__card-actions {
+  display: flex;
+  gap: 8px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    max-height 1s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 1s ease,
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.applications-page__card:hover .applications-page__ltc-prompt,
+.applications-page__card:focus-within .applications-page__ltc-prompt,
+.applications-page__card:hover .applications-page__card-actions,
+.applications-page__card:focus-within .applications-page__card-actions {
+  max-height: 56px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.applications-page__ltc-trigger:hover {
+  border-color: rgba(17, 24, 39, 0.16);
+  background: rgba(17, 24, 39, 0.06);
+  color: #111827;
 }
 
 .applications-page__detail-item {
@@ -558,11 +615,6 @@
 
 .applications-page__status-dot.status-ghosted {
   background: rgba(147, 51, 234, 0.8);
-}
-
-.applications-page__card-actions {
-  display: flex;
-  gap: 8px;
 }
 
 .applications-page__card-button {
@@ -658,6 +710,20 @@
 
   .applications-page__stat-card:last-child {
     border-bottom: none;
+  }
+}
+
+@media (hover: none) {
+  .applications-page__ltc-prompt,
+  .applications-page__card-actions {
+    max-height: 56px;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .applications-page__ltc-trigger {
+    pointer-events: auto;
   }
 }
 
