@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import {
   FiArrowRight,
   FiBriefcase,
@@ -13,13 +13,11 @@ import {
 import Sidebar from "./components/Sidebar";
 import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
 import SuccessMessage from "../components/SuccessMessage/SuccessMessage";
-import ApplicationModal from "./components/ApplicationModal";
 import MessageNotification from "./components/MessageNotification";
 import { ApplicationContext } from "@/contexts/ApplicationContext";
-import { ApplicationFormData, ApplicationStatus } from "@/types";
+import { ApplicationStatus } from "@/types";
 import {
   formatApplicationDate,
-  getApplicationMutationSuccessMessage,
   getApplicationOverviewStats,
   getApplicationsByStatuses,
   getRecentApplications,
@@ -31,13 +29,10 @@ import "./page.css";
 export default function Dashboard() {
   const {
     applications,
-    addApplication,
     isMessage,
     setIsMessage,
     messageType,
-    setMessageType,
   } = useContext(ApplicationContext);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (isMessage) {
@@ -68,29 +63,6 @@ export default function Dashboard() {
       ),
     [applications],
   );
-
-  const handleModalSubmit = async (data: ApplicationFormData) => {
-    if (!data.company || !data.position || !data.status) {
-      setMessageType("error");
-      setIsMessage(
-        "Please fill in all required fields: Company, Position, and Status.",
-      );
-      throw new Error("Missing required application fields");
-    }
-
-    try {
-      const createdApplication = await addApplication(data);
-      setMessageType("success");
-      setIsMessage(
-        getApplicationMutationSuccessMessage(createdApplication, "added"),
-      );
-      setIsModalOpen(false);
-    } catch {
-      setMessageType("error");
-      setIsMessage("We couldn't add the application. Please try again.");
-      throw new Error("Application creation failed");
-    }
-  };
 
   return (
     <>
@@ -284,28 +256,20 @@ export default function Dashboard() {
                   Adapt your resume to a job post and download the updated PDF.
                 </span>
               </Link>
-              <button
-                type="button"
+              <Link
+                href="/dashboard/applications/new"
                 className="dashboard-overview__action-card dashboard-overview__action-card--button"
-                onClick={() => setIsModalOpen(true)}
               >
                 <FiPlus />
                 <strong>Add new application</strong>
                 <span>
                   Create a fresh application entry without leaving the overview.
                 </span>
-              </button>
+              </Link>
             </div>
           </article>
         </section>
       </main>
-
-      <ApplicationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        mode="create"
-      />
 
       {isMessage && messageType === "success" ? (
         <SuccessMessage message={isMessage} onClose={() => setIsMessage("")} />

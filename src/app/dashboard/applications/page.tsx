@@ -27,7 +27,6 @@ import {
   ApplicationFocusFilter,
   formatApplicationDate,
   getDropStatusForColumn,
-  getApplicationMutationSuccessMessage,
   getApplicationOverviewStats,
   getApplicationsByStatuses,
   getApplicationsForFocus,
@@ -66,14 +65,12 @@ function updateBoardWithTransition(update: () => void) {
 export default function ApplicationsPage() {
   const {
     applications,
-    addApplication,
     editApplication,
     isMessage,
     setIsMessage,
     messageType,
     setMessageType,
   } = useContext(ApplicationContext);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingApp, setEditingApp] = useState<Application | null>(null);
   const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [selectedAppForDelete, setSelectedAppForDelete] = useState<{
@@ -131,18 +128,11 @@ export default function ApplicationsPage() {
     [scopedApplications, searchQuery],
   );
 
-  const handleOpenModal = () => {
-    setEditingApp(null);
-    setIsModalOpen(true);
-  };
-
   const handleEditClick = (application: Application) => {
     setEditingApp(application);
-    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
     setEditingApp(null);
   };
 
@@ -228,27 +218,10 @@ export default function ApplicationsPage() {
       throw new Error("Missing required application fields");
     }
 
-    if (editingApp) {
-      setEditConfirmationData({
-        isOpen: true,
-        appData: data,
-      });
-      setIsModalOpen(false);
-      return;
-    }
-
-    try {
-      const createdApplication = await addApplication(data);
-      setMessageType("success");
-      setIsMessage(
-        getApplicationMutationSuccessMessage(createdApplication, "added"),
-      );
-      setIsModalOpen(false);
-    } catch {
-      setMessageType("error");
-      setIsMessage("We couldn't add the application. Please try again.");
-      throw new Error("Application creation failed");
-    }
+    setEditConfirmationData({
+      isOpen: true,
+      appData: data,
+    });
   };
 
   return (
@@ -270,14 +243,13 @@ export default function ApplicationsPage() {
           </div>
 
           <div className="applications-page__hero-actions">
-            <button
-              type="button"
+            <Link
+              href="/dashboard/applications/new"
               className="applications-page__button applications-page__button--primary"
-              onClick={handleOpenModal}
             >
               <FiPlus />
               Add New Application
-            </button>
+            </Link>
             <Link
               href="/dashboard/taylor"
               className="applications-page__button applications-page__button--secondary"
@@ -554,10 +526,10 @@ export default function ApplicationsPage() {
       </main>
 
       <ApplicationModal
-        isOpen={isModalOpen}
+        isOpen={Boolean(editingApp)}
         onClose={handleCloseModal}
         onSubmit={handleModalSubmit}
-        mode={editingApp ? "edit" : "create"}
+        mode="edit"
         initialData={editingApp}
       />
 
