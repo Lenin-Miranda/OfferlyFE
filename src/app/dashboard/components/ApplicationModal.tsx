@@ -2,16 +2,18 @@
 import { useEffect, useState, useRef } from "react";
 import { Application, ApplicationStatus } from "@/types";
 import {
-  FiX,
-  FiBriefcase,
-  FiInfo,
-  FiMapPin,
-  FiDollarSign,
-  FiLink,
-  FiFileText,
-  FiMessageSquare,
-  FiCalendar,
-} from "react-icons/fi";
+  BriefcaseBusiness,
+  CalendarDays,
+  CircleCheckBig,
+  FileText,
+  Info,
+  Link2,
+  MapPin,
+  MessageSquareText,
+  Target,
+  Wallet,
+  X,
+} from "lucide-react";
 import "./ApplicationModal.css";
 import { ApplicationModalProps } from "@/types";
 import LtcScoreCard from "./LtcScoreCard";
@@ -130,6 +132,13 @@ function ApplicationModalContent({
     }));
   };
 
+  const modalTitle =
+    mode === "create" ? "Add New Application" : "Edit Application";
+  const modalSubtitle =
+    mode === "create"
+      ? "Capture the key details now and keep the rest of the workflow moving."
+      : "Update the essentials with a cleaner, focused view of this role.";
+
   return (
     <div
       ref={modalRef}
@@ -142,15 +151,18 @@ function ApplicationModalContent({
     >
       <div className={`modal ${isAnimating ? "modal--open" : ""}`}>
         <div className="modal__header">
-          <h2 className="modal__title">
-            {mode === "create" ? "Add New Application" : "Edit Application"}
-          </h2>
+          <div className="modal__header-copy">
+            <span className="modal__eyebrow">Application</span>
+            <h2 className="modal__title">{modalTitle}</h2>
+            <p className="modal__subtitle">{modalSubtitle}</p>
+          </div>
           <button
             type="button"
             onClick={handleClose}
             className="modal__close-btn"
+            aria-label="Close modal"
           >
-            <FiX />
+            <X />
           </button>
         </div>
 
@@ -158,8 +170,10 @@ function ApplicationModalContent({
           <div className="modal__form-container">
             <div className="modal__form-row">
               <label className="modal__form-label">
-                <FiBriefcase className="modal__form-icon" />
-                Company *
+                <span className="modal__field-head">
+                  <BriefcaseBusiness className="modal__form-icon" />
+                  Company *
+                </span>
                 <input
                   type="text"
                   name="company"
@@ -172,8 +186,10 @@ function ApplicationModalContent({
               </label>
 
               <label className="modal__form-label">
-                <FiBriefcase className="modal__form-icon" />
-                Position *
+                <span className="modal__field-head">
+                  <Target className="modal__form-icon" />
+                  Position *
+                </span>
                 <input
                   type="text"
                   name="position"
@@ -188,7 +204,10 @@ function ApplicationModalContent({
 
             <div className="modal__form-row">
               <label className="modal__form-label">
-                Status *
+                <span className="modal__field-head">
+                  <CircleCheckBig className="modal__form-icon" />
+                  Status *
+                </span>
                 <select
                   name="status"
                   value={formData.status}
@@ -210,8 +229,10 @@ function ApplicationModalContent({
               </label>
 
               <label className="modal__form-label">
-                <FiMapPin className="modal__form-icon" />
-                Location
+                <span className="modal__field-head">
+                  <MapPin className="modal__form-icon" />
+                  Location
+                </span>
                 <input
                   type="text"
                   name="location"
@@ -225,8 +246,10 @@ function ApplicationModalContent({
 
             <div className="modal__form-row">
               <label className="modal__form-label">
-                <FiDollarSign className="modal__form-icon" />
-                Salary
+                <span className="modal__field-head">
+                  <Wallet className="modal__form-icon" />
+                  Salary
+                </span>
                 <input
                   type="number"
                   name="salary"
@@ -238,8 +261,10 @@ function ApplicationModalContent({
               </label>
 
               <label className="modal__form-label">
-                <FiCalendar className="modal__form-icon" />
-                Date Applied
+                <span className="modal__field-head">
+                  <CalendarDays className="modal__form-icon" />
+                  Date Applied
+                </span>
                 <input
                   type="date"
                   name="appliedAt"
@@ -250,7 +275,10 @@ function ApplicationModalContent({
               </label>
 
               <label className="modal__form-label">
-                Currency
+                <span className="modal__field-head">
+                  <Wallet className="modal__form-icon" />
+                  Currency
+                </span>
                 <select
                   name="currency"
                   value={formData.currency}
@@ -267,8 +295,10 @@ function ApplicationModalContent({
             </div>
 
             <label className="modal__form-label">
-              <FiLink className="modal__form-icon" />
-              Job URL
+              <span className="modal__field-head">
+                <Link2 className="modal__form-icon" />
+                Job URL
+              </span>
               <input
                 type="url"
                 name="jobUrl"
@@ -280,8 +310,10 @@ function ApplicationModalContent({
             </label>
 
             <label className="modal__form-label">
-              <FiFileText className="modal__form-icon" />
-              Description
+              <span className="modal__field-head">
+                <FileText className="modal__form-icon" />
+                Description
+              </span>
               <textarea
                 name="description"
                 value={formData.description}
@@ -291,14 +323,16 @@ function ApplicationModalContent({
                 placeholder="Job description, requirements, etc."
               />
               <span className="modal__form-hint">
-                <FiInfo />
+                <Info />
                 Adding the job description improves the ltcScore match analysis.
               </span>
             </label>
 
             <label className="modal__form-label">
-              <FiMessageSquare className="modal__form-icon" />
-              Notes
+              <span className="modal__field-head">
+                <MessageSquareText className="modal__form-icon" />
+                Notes
+              </span>
               <textarea
                 name="notes"
                 value={formData.notes}
@@ -310,7 +344,9 @@ function ApplicationModalContent({
             </label>
 
             {initialData ? (
-              <LtcScoreCard application={initialData as Application} />
+              <div className="modal__score-card">
+                <LtcScoreCard application={initialData as Application} />
+              </div>
             ) : null}
           </div>
 
