@@ -1,5 +1,19 @@
 "use client";
 
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  pointerWithin,
+  useDraggable,
+  useDroppable,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
 import { startTransition, useContext, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
@@ -28,7 +42,6 @@ import {
   formatApplicationDate,
   getDropStatusForColumn,
   getApplicationOverviewStats,
-  getApplicationsByStatuses,
   getApplicationsForFocus,
   getKanbanColumnByStatus,
   getStatusClass,
@@ -45,6 +58,179 @@ function getApplicationIdentifier(application: Application) {
 function getCardTransitionName(applicationId: string) {
   const safeId = applicationId.replace(/[^a-zA-Z0-9_-]/g, "");
   return `application-card-${safeId || "unknown"}`;
+}
+
+function getEmptyColumnBuckets() {
+  return Object.fromEntries(
+    kanbanColumns.map((column) => [column.id, [] as Application[]]),
+  ) as Record<string, Application[]>;
+}
+
+function isKanbanColumnId(value: string | null) {
+  return value ? kanbanColumns.some((column) => column.id === value) : false;
+}
+
+function ApplicationCardContent({
+  application,
+  onEditApplication,
+  onDeleteApplication,
+  showInsights = true,
+  showActions = true,
+}: {
+  application: Application;
+  onEditApplication?: (application: Application) => void;
+  onDeleteApplication?: (applicationId: string, companyName: string) => void;
+  showInsights?: boolean;
+  showActions?: boolean;
+}) {
+  return (
+    <>
+      <div className="applications-page__card-head">
+        <h4>{application.company}</h4>
+        <span
+          className={`applications-page__status-dot ${getStatusClass(
+            application.status,
+          )}`}
+        />
+      </div>
+
+      <p className="applications-page__card-role">{application.position}</p>
+
+      <div className="applications-page__card-status">
+        <span>Status</span>
+        <strong
+          className={`applications-page__status-badge ${getStatusClass(
+            application.status,
+          )}`}
+        >
+          {getStatusDisplayName(application.status)}
+        </strong>
+      </div>
+
+      <div className="applications-page__card-details">
+        <div className="applications-page__detail-item">
+          <FiMapPin />
+          <span>{application.location || "Remote / TBD"}</span>
+        </div>
+        <div className="applications-page__detail-item">
+          <FiDollarSign />
+          <span>
+            {application.salary
+              ? `${application.salary}`
+              : "Compensation not added"}
+          </span>
+        </div>
+        <div className="applications-page__detail-item">
+          <FiCalendar />
+          <span>{formatApplicationDate(application.appliedAt)}</span>
+        </div>
+      </div>
+
+      {showInsights ? (
+        <LtcScoreCard
+          application={application}
+          compact
+          onEditApplication={onEditApplication}
+          className="applications-page__ltc-card"
+        />
+      ) : null}
+
+      {showActions && onEditApplication && onDeleteApplication ? (
+        <div className="applications-page__card-actions">
+          <button
+            type="button"
+            className="applications-page__card-button applications-page__card-button--edit"
+            onClick={() => onEditApplication(application)}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            className="applications-page__card-button applications-page__card-button--delete"
+            onClick={() =>
+              onDeleteApplication(
+                getApplicationIdentifier(application),
+                application.company,
+              )
+            }
+          >
+            Delete
+          </button>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function DraggableApplicationCard({
+  application,
+  isUpdating,
+  isActive,
+  onEditApplication,
+  onDeleteApplication,
+}: {
+  application: Application;
+  isUpdating: boolean;
+  isActive: boolean;
+  onEditApplication: (application: Application) => void;
+  onDeleteApplication: (applicationId: string, companyName: string) => void;
+}) {
+  const applicationId = getApplicationIdentifier(application);
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useDraggable({
+      id: applicationId,
+      disabled: isUpdating,
+    });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`applications-page__card ${getStatusClass(application.status)} ${
+        isDragging || isActive ? "applications-page__card--dragging" : ""
+      } ${isUpdating ? "applications-page__card--updating" : ""}`}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        viewTransitionName: getCardTransitionName(applicationId),
+      }}
+      {...listeners}
+      {...attributes}
+    >
+      <ApplicationCardContent
+        application={application}
+        onEditApplication={onEditApplication}
+        onDeleteApplication={onDeleteApplication}
+      />
+    </div>
+  );
+}
+
+function DroppableColumnBody({
+  columnId,
+  isDragActive,
+  isHighlighted,
+  children,
+}: {
+  columnId: string;
+  isDragActive: boolean;
+  isHighlighted: boolean;
+  children: React.ReactNode;
+}) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: columnId,
+    disabled: !isDragActive,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`applications-page__cards ${
+        isDragActive ? "applications-page__cards--drop-ready" : ""
+      } ${isOver || isHighlighted ? "applications-page__cards--drag-over" : ""}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 function updateBoardWithTransition(update: () => void) {
@@ -93,8 +279,15 @@ export default function ApplicationsPage() {
     null,
   );
   const [updatingApplicationIds, setUpdatingApplicationIds] = useState<
-    string[]
-  >([]);
+    Set<string>
+  >(() => new Set());
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  );
 
   useEffect(() => {
     if (isMessage) {
@@ -126,6 +319,31 @@ export default function ApplicationsPage() {
         matchesApplicationSearch(application, searchQuery),
       ),
     [scopedApplications, searchQuery],
+  );
+  const visibleApplicationsByColumn = useMemo(() => {
+    const groupedApplications = getEmptyColumnBuckets();
+
+    visibleApplications.forEach((application) => {
+      const columnId = getKanbanColumnByStatus(application.status)?.id;
+
+      if (!columnId) {
+        return;
+      }
+
+      groupedApplications[columnId].push(application);
+    });
+
+    return groupedApplications;
+  }, [visibleApplications]);
+  const activeApplication = useMemo(
+    () =>
+      draggedApplicationId
+        ? boardApplications.find(
+            (application) =>
+              getApplicationIdentifier(application) === draggedApplicationId,
+          ) || null
+        : null,
+    [boardApplications, draggedApplicationId],
   );
 
   const handleEditClick = (application: Application) => {
@@ -179,7 +397,11 @@ export default function ApplicationsPage() {
 
     setDraggedApplicationId(null);
     setDraggedOverColumnId(null);
-    setUpdatingApplicationIds((currentIds) => [...currentIds, applicationId]);
+    setUpdatingApplicationIds((currentIds) => {
+      const nextIds = new Set(currentIds);
+      nextIds.add(applicationId);
+      return nextIds;
+    });
 
     try {
       await editApplication(applicationId, { status: nextStatus });
@@ -194,9 +416,11 @@ export default function ApplicationsPage() {
       setMessageType("error");
       setIsMessage("We couldn't update the application status. Please try again.");
     } finally {
-      setUpdatingApplicationIds((currentIds) =>
-        currentIds.filter((id) => id !== applicationId),
-      );
+      setUpdatingApplicationIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+        nextIds.delete(applicationId);
+        return nextIds;
+      });
     }
   };
 
@@ -222,6 +446,48 @@ export default function ApplicationsPage() {
       isOpen: true,
       appData: data,
     });
+  };
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    const applicationId = String(active.id);
+    const application = boardApplications.find(
+      (item) => getApplicationIdentifier(item) === applicationId,
+    );
+
+    setDraggedApplicationId(applicationId);
+    setDraggedOverColumnId(
+      application ? getKanbanColumnByStatus(application.status)?.id ?? null : null,
+    );
+  };
+
+  const handleDragOver = ({ over }: DragOverEvent) => {
+    const nextColumnId = over ? String(over.id) : null;
+    setDraggedOverColumnId(
+      isKanbanColumnId(nextColumnId) ? nextColumnId : null,
+    );
+  };
+
+  const handleDragCancel = () => {
+    setDraggedApplicationId(null);
+    setDraggedOverColumnId(null);
+  };
+
+  const handleDragEnd = async ({ active, over }: DragEndEvent) => {
+    const applicationId = String(active.id);
+    const overColumnId = over ? String(over.id) : null;
+    const targetColumnId = isKanbanColumnId(overColumnId)
+      ? overColumnId
+      : draggedOverColumnId;
+
+    if (!targetColumnId) {
+      setDraggedApplicationId(null);
+      setDraggedOverColumnId(null);
+      return;
+    }
+
+    await moveApplicationToColumn(applicationId, targetColumnId);
+    setDraggedApplicationId(null);
+    setDraggedOverColumnId(null);
   };
 
   return (
@@ -334,193 +600,84 @@ export default function ApplicationsPage() {
           </div>
 
           <div className="applications-page__columns">
-            {kanbanColumns.map((column) => {
-              const columnApplications = getApplicationsByStatuses(
-                visibleApplications,
-                column.statuses,
-              );
+            <DndContext
+              sensors={sensors}
+              collisionDetection={pointerWithin}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDragEnd={(event) => {
+                void handleDragEnd(event);
+              }}
+              onDragCancel={handleDragCancel}
+            >
+              {kanbanColumns.map((column) => {
+                const columnApplications = visibleApplicationsByColumn[column.id] || [];
 
-              return (
-                <div
-                  key={column.id}
-                  className={`applications-page__column applications-page__column--${column.color}`}
-                  data-aos="fade-up"
-                  data-aos-delay="80"
-                >
-                  <div className="applications-page__column-head">
-                    <div className="applications-page__column-label">
-                      <column.icon className="applications-page__column-icon" />
-                      <h3>{column.title}</h3>
-                    </div>
-                    <span className="applications-page__column-count">
-                      {columnApplications.length}
-                    </span>
-                  </div>
-
+                return (
                   <div
-                    className={
-                      draggedOverColumnId === column.id
-                        ? "applications-page__cards applications-page__cards--drag-over"
-                        : "applications-page__cards"
-                    }
-                    onDragOver={(event) => {
-                      event.preventDefault();
-                      if (draggedApplicationId) {
-                        event.dataTransfer.dropEffect = "move";
-                      }
-                    }}
-                    onDragEnter={(event) => {
-                      event.preventDefault();
-                      if (draggedApplicationId) {
-                        setDraggedOverColumnId(column.id);
-                      }
-                    }}
-                    onDragLeave={(event) => {
-                      if (
-                        event.currentTarget.contains(event.relatedTarget as Node | null)
-                      ) {
-                        return;
-                      }
-                      setDraggedOverColumnId((currentColumnId) =>
-                        currentColumnId === column.id ? null : currentColumnId,
-                      );
-                    }}
-                    onDrop={async (event) => {
-                      event.preventDefault();
-                      const droppedApplicationId =
-                        event.dataTransfer.getData("text/plain") ||
-                        draggedApplicationId;
-
-                      if (!droppedApplicationId) {
-                        setDraggedOverColumnId(null);
-                        return;
-                      }
-
-                      await moveApplicationToColumn(droppedApplicationId, column.id);
-                    }}
+                    key={column.id}
+                    className={`applications-page__column applications-page__column--${column.color}`}
+                    data-aos="fade-up"
+                    data-aos-delay="80"
                   >
-                    {columnApplications.length > 0 ? (
-                      columnApplications.map((application) => (
-                        <div
-                          key={getApplicationIdentifier(application)}
-                          className={`applications-page__card ${getStatusClass(
-                            application.status,
-                          )} ${
-                            draggedApplicationId === getApplicationIdentifier(application)
-                              ? "applications-page__card--dragging"
-                              : ""
-                          } ${
-                            updatingApplicationIds.includes(
-                              getApplicationIdentifier(application),
-                            )
-                              ? "applications-page__card--updating"
-                              : ""
-                          }`}
-                          draggable={
-                            !updatingApplicationIds.includes(
-                              getApplicationIdentifier(application),
-                            )
-                          }
-                          onDragStart={(event) => {
-                            const applicationId = getApplicationIdentifier(application);
-                            event.dataTransfer.effectAllowed = "move";
-                            event.dataTransfer.setData("text/plain", applicationId);
-                            setDraggedApplicationId(applicationId);
-                          }}
-                          onDragEnd={() => {
-                            setDraggedApplicationId(null);
-                            setDraggedOverColumnId(null);
-                          }}
-                          style={{
-                            viewTransitionName: getCardTransitionName(
-                              getApplicationIdentifier(application),
-                            ),
-                          }}
-                        >
-                          <div className="applications-page__card-head">
-                            <h4>{application.company}</h4>
-                            <span
-                              className={`applications-page__status-dot ${getStatusClass(
-                                application.status,
-                              )}`}
-                            />
-                          </div>
-
-                          <p className="applications-page__card-role">
-                            {application.position}
-                          </p>
-
-                          <div className="applications-page__card-status">
-                            <span>Status</span>
-                            <strong
-                              className={`applications-page__status-badge ${getStatusClass(
-                                application.status,
-                              )}`}
-                            >
-                              {getStatusDisplayName(application.status)}
-                            </strong>
-                          </div>
-
-                          <div className="applications-page__card-details">
-                            <div className="applications-page__detail-item">
-                              <FiMapPin />
-                              <span>{application.location || "Remote / TBD"}</span>
-                            </div>
-                            <div className="applications-page__detail-item">
-                              <FiDollarSign />
-                              <span>
-                                {application.salary
-                                  ? `${application.salary}`
-                                  : "Compensation not added"}
-                              </span>
-                            </div>
-                            <div className="applications-page__detail-item">
-                              <FiCalendar />
-                              <span>
-                                {formatApplicationDate(application.appliedAt)}
-                              </span>
-                            </div>
-                          </div>
-
-                          <LtcScoreCard
-                            application={application}
-                            compact
-                            onEditApplication={handleEditClick}
-                            className="applications-page__ltc-card"
-                          />
-
-                          <div className="applications-page__card-actions">
-                            <button
-                              type="button"
-                              className="applications-page__card-button applications-page__card-button--edit"
-                              onClick={() => handleEditClick(application)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              className="applications-page__card-button applications-page__card-button--delete"
-                              onClick={() =>
-                                handleDeleteClick(
-                                  getApplicationIdentifier(application),
-                                  application.company,
-                                )
-                              }
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="applications-page__empty-column">
-                        No applications match this column right now.
+                    <div className="applications-page__column-head">
+                      <div className="applications-page__column-label">
+                        <column.icon className="applications-page__column-icon" />
+                        <h3>{column.title}</h3>
                       </div>
-                    )}
+                      <span className="applications-page__column-count">
+                        {columnApplications.length}
+                      </span>
+                    </div>
+
+                    <DroppableColumnBody
+                      columnId={column.id}
+                      isDragActive={Boolean(draggedApplicationId)}
+                      isHighlighted={draggedOverColumnId === column.id}
+                    >
+                      {columnApplications.length > 0 ? (
+                        columnApplications.map((application) => (
+                          <DraggableApplicationCard
+                            key={getApplicationIdentifier(application)}
+                            application={application}
+                            isUpdating={updatingApplicationIds.has(
+                              getApplicationIdentifier(application),
+                            )}
+                            isActive={
+                              draggedApplicationId ===
+                              getApplicationIdentifier(application)
+                            }
+                            onEditApplication={handleEditClick}
+                            onDeleteApplication={handleDeleteClick}
+                          />
+                        ))
+                      ) : (
+                        <div className="applications-page__empty-column">
+                          No applications match this column right now.
+                        </div>
+                      )}
+                    </DroppableColumnBody>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+
+              <DragOverlay
+                dropAnimation={{
+                  duration: 220,
+                  easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+              >
+                {activeApplication ? (
+                  <div className="applications-page__drag-overlay">
+                    <ApplicationCardContent
+                      application={activeApplication}
+                      showInsights={false}
+                      showActions={false}
+                    />
+                  </div>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
           </div>
         </section>
       </main>

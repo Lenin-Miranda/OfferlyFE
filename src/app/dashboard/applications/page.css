@@ -346,21 +346,39 @@
 
 .applications-page__cards {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0;
   min-height: 160px;
+  height: 100%;
   padding: 8px 10px 12px;
   border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
   transition:
     background-color 0.22s ease,
     box-shadow 0.22s ease,
-    transform 0.22s ease;
+    transform 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.applications-page__cards--drop-ready {
+  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.06);
 }
 
 .applications-page__cards--drag-over {
-  background: rgba(17, 24, 39, 0.045);
-  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.08);
-  transform: translateY(-2px);
+  background: linear-gradient(
+    180deg,
+    rgba(219, 234, 254, 0.56) 0%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(59, 130, 246, 0.28),
+    0 18px 35px rgba(59, 130, 246, 0.08);
+  transform: translateY(-4px);
 }
 
 .applications-page__card {
@@ -376,6 +394,9 @@
     0 12px 30px rgba(15, 23, 42, 0.06),
     0 1px 0 rgba(255, 255, 255, 0.7) inset;
   cursor: grab;
+  touch-action: none;
+  user-select: none;
+  will-change: transform;
   transition:
     transform 0.2s ease,
     box-shadow 0.22s ease,
@@ -396,12 +417,12 @@
 }
 
 .applications-page__card--dragging {
-  opacity: 0.52;
-  transform: scale(0.98);
+  opacity: 0.18;
+  transform: scale(0.985);
   cursor: grabbing;
   box-shadow:
-    0 20px 42px rgba(15, 23, 42, 0.14),
-    0 0 0 1px rgba(17, 24, 39, 0.12);
+    0 10px 24px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(17, 24, 39, 0.08);
 }
 
 .applications-page__card--updating {
@@ -570,12 +591,32 @@
 }
 
 .applications-page__empty-column {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
   padding: 18px 16px;
   border: 1px dashed rgba(17, 24, 39, 0.12);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.72);
   color: rgba(17, 24, 39, 0.62);
   line-height: 1.6;
+}
+
+.applications-page__drag-overlay {
+  width: min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow:
+    0 26px 60px rgba(15, 23, 42, 0.18),
+    0 1px 0 rgba(255, 255, 255, 0.76) inset;
+  transform: rotate(-1.5deg) scale(1.015);
+  pointer-events: none;
 }
 
 @keyframes applications-line {
