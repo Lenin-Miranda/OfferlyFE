@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { startTransition, useContext, useEffect, useMemo, useState } from "react";
+import { flushSync } from "react-dom";
 import {
   FiCalendar,
   FiClock,
@@ -25,10 +26,12 @@ import {
   applicationFocusFilters,
   ApplicationFocusFilter,
   formatApplicationDate,
+  getDropStatusForColumn,
   getApplicationMutationSuccessMessage,
   getApplicationOverviewStats,
   getApplicationsByStatuses,
   getApplicationsForFocus,
+  getKanbanColumnByStatus,
   getStatusClass,
   getStatusDisplayName,
   kanbanColumns,
@@ -36,10 +39,35 @@ import {
 } from "../applicationHelpers";
 import "./page.css";
 
+function getApplicationIdentifier(application: Application) {
+  return application._id || application.id;
+}
+
+function getCardTransitionName(applicationId: string) {
+  const safeId = applicationId.replace(/[^a-zA-Z0-9_-]/g, "");
+  return `application-card-${safeId || "unknown"}`;
+}
+
+function updateBoardWithTransition(update: () => void) {
+  const documentWithTransition = document as Document & {
+    startViewTransition?: (callback: () => void) => void;
+  };
+
+  if (typeof documentWithTransition.startViewTransition === "function") {
+    documentWithTransition.startViewTransition(() => {
+      flushSync(update);
+    });
+    return;
+  }
+
+  update();
+}
+
 export default function ApplicationsPage() {
   const {
     applications,
     addApplication,
+    editApplication,
     isMessage,
     setIsMessage,
     messageType,
@@ -59,6 +87,17 @@ export default function ApplicationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [focusFilter, setFocusFilter] =
     useState<ApplicationFocusFilter>("all");
+  const [boardApplications, setBoardApplications] =
+    useState<Application[]>(applications);
+  const [draggedApplicationId, setDraggedApplicationId] = useState<
+    string | null
+  >(null);
+  const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(
+    null,
+  );
+  const [updatingApplicationIds, setUpdatingApplicationIds] = useState<
+    string[]
+  >([]);
 
   useEffect(() => {
     if (isMessage) {
@@ -70,13 +109,19 @@ export default function ApplicationsPage() {
     }
   }, [isMessage, setIsMessage]);
 
+  useEffect(() => {
+    startTransition(() => {
+      setBoardApplications(applications);
+    });
+  }, [applications]);
+
   const overviewStats = useMemo(
-    () => getApplicationOverviewStats(applications),
-    [applications],
+    () => getApplicationOverviewStats(boardApplications),
+    [boardApplications],
   );
   const scopedApplications = useMemo(
-    () => getApplicationsForFocus(applications, focusFilter),
-    [applications, focusFilter],
+    () => getApplicationsForFocus(boardApplications, focusFilter),
+    [boardApplications, focusFilter],
   );
   const visibleApplications = useMemo(
     () =>
@@ -104,6 +149,65 @@ export default function ApplicationsPage() {
   const handleDeleteClick = (applicationId: string, companyName: string) => {
     setSelectedAppForDelete({ id: applicationId, company: companyName });
     setIsMessageOpen(true);
+  };
+
+  const moveApplicationToColumn = async (
+    applicationId: string,
+    targetColumnId: string,
+  ) => {
+    const targetStatus = getDropStatusForColumn(targetColumnId);
+    const targetColumn = kanbanColumns.find((column) => column.id === targetColumnId);
+    const application = boardApplications.find(
+      (item) => getApplicationIdentifier(item) === applicationId,
+    );
+
+    if (!application || !targetStatus || !targetColumn) {
+      return;
+    }
+
+    const currentColumnId = getKanbanColumnByStatus(application.status)?.id;
+    if (currentColumnId === targetColumnId) {
+      return;
+    }
+
+    const previousApplications = boardApplications;
+    const nextStatus =
+      targetColumnId === "closed" &&
+      getKanbanColumnByStatus(application.status)?.id === "closed"
+        ? application.status
+        : targetStatus;
+
+    updateBoardWithTransition(() => {
+      setBoardApplications((currentApplications) =>
+        currentApplications.map((item) =>
+          getApplicationIdentifier(item) === applicationId
+            ? { ...item, status: nextStatus }
+            : item,
+        ),
+      );
+    });
+
+    setDraggedApplicationId(null);
+    setDraggedOverColumnId(null);
+    setUpdatingApplicationIds((currentIds) => [...currentIds, applicationId]);
+
+    try {
+      await editApplication(applicationId, { status: nextStatus });
+      setMessageType("success");
+      setIsMessage(
+        `${application.company} moved to ${getStatusDisplayName(nextStatus)}.`,
+      );
+    } catch {
+      updateBoardWithTransition(() => {
+        setBoardApplications(previousApplications);
+      });
+      setMessageType("error");
+      setIsMessage("We couldn't update the application status. Please try again.");
+    } finally {
+      setUpdatingApplicationIds((currentIds) =>
+        currentIds.filter((id) => id !== applicationId),
+      );
+    }
   };
 
   const handleCloseConfirmation = () => {
@@ -281,14 +385,85 @@ export default function ApplicationsPage() {
                     </span>
                   </div>
 
-                  <div className="applications-page__cards">
+                  <div
+                    className={
+                      draggedOverColumnId === column.id
+                        ? "applications-page__cards applications-page__cards--drag-over"
+                        : "applications-page__cards"
+                    }
+                    onDragOver={(event) => {
+                      event.preventDefault();
+                      if (draggedApplicationId) {
+                        event.dataTransfer.dropEffect = "move";
+                      }
+                    }}
+                    onDragEnter={(event) => {
+                      event.preventDefault();
+                      if (draggedApplicationId) {
+                        setDraggedOverColumnId(column.id);
+                      }
+                    }}
+                    onDragLeave={(event) => {
+                      if (
+                        event.currentTarget.contains(event.relatedTarget as Node | null)
+                      ) {
+                        return;
+                      }
+                      setDraggedOverColumnId((currentColumnId) =>
+                        currentColumnId === column.id ? null : currentColumnId,
+                      );
+                    }}
+                    onDrop={async (event) => {
+                      event.preventDefault();
+                      const droppedApplicationId =
+                        event.dataTransfer.getData("text/plain") ||
+                        draggedApplicationId;
+
+                      if (!droppedApplicationId) {
+                        setDraggedOverColumnId(null);
+                        return;
+                      }
+
+                      await moveApplicationToColumn(droppedApplicationId, column.id);
+                    }}
+                  >
                     {columnApplications.length > 0 ? (
                       columnApplications.map((application) => (
                         <div
-                          key={application._id || application.id}
+                          key={getApplicationIdentifier(application)}
                           className={`applications-page__card ${getStatusClass(
                             application.status,
-                          )}`}
+                          )} ${
+                            draggedApplicationId === getApplicationIdentifier(application)
+                              ? "applications-page__card--dragging"
+                              : ""
+                          } ${
+                            updatingApplicationIds.includes(
+                              getApplicationIdentifier(application),
+                            )
+                              ? "applications-page__card--updating"
+                              : ""
+                          }`}
+                          draggable={
+                            !updatingApplicationIds.includes(
+                              getApplicationIdentifier(application),
+                            )
+                          }
+                          onDragStart={(event) => {
+                            const applicationId = getApplicationIdentifier(application);
+                            event.dataTransfer.effectAllowed = "move";
+                            event.dataTransfer.setData("text/plain", applicationId);
+                            setDraggedApplicationId(applicationId);
+                          }}
+                          onDragEnd={() => {
+                            setDraggedApplicationId(null);
+                            setDraggedOverColumnId(null);
+                          }}
+                          style={{
+                            viewTransitionName: getCardTransitionName(
+                              getApplicationIdentifier(application),
+                            ),
+                          }}
                         >
                           <div className="applications-page__card-head">
                             <h4>{application.company}</h4>
@@ -355,7 +530,7 @@ export default function ApplicationsPage() {
                               className="applications-page__card-button applications-page__card-button--delete"
                               onClick={() =>
                                 handleDeleteClick(
-                                  application._id || application.id,
+                                  getApplicationIdentifier(application),
                                   application.company,
                                 )
                               }

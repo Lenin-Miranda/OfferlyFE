@@ -6,6 +6,7 @@ export interface KanbanColumnConfig {
   id: string;
   title: string;
   statuses: ApplicationStatus[];
+  dropStatus: ApplicationStatus;
   color: "gray" | "blue" | "orange" | "green";
   icon: IconType;
 }
@@ -42,6 +43,7 @@ export const kanbanColumns: KanbanColumnConfig[] = [
     id: "saved",
     title: "Saved",
     statuses: [ApplicationStatus.SAVED],
+    dropStatus: ApplicationStatus.SAVED,
     color: "gray",
     icon: FiBookmark,
   },
@@ -49,6 +51,7 @@ export const kanbanColumns: KanbanColumnConfig[] = [
     id: "applied",
     title: "Applied",
     statuses: [ApplicationStatus.APPLIED],
+    dropStatus: ApplicationStatus.APPLIED,
     color: "blue",
     icon: FiSend,
   },
@@ -56,6 +59,7 @@ export const kanbanColumns: KanbanColumnConfig[] = [
     id: "inprogress",
     title: "In Progress",
     statuses: IN_PROGRESS_STATUSES,
+    dropStatus: ApplicationStatus.INTERVIEWING,
     color: "orange",
     icon: FiClock,
   },
@@ -63,6 +67,7 @@ export const kanbanColumns: KanbanColumnConfig[] = [
     id: "closed",
     title: "Closed",
     statuses: CLOSED_STATUSES,
+    dropStatus: ApplicationStatus.REJECTED,
     color: "green",
     icon: FiCheckCircle,
   },
@@ -97,6 +102,14 @@ export function getApplicationsByStatuses(
   return applications.filter((application) =>
     statuses.includes(application.status),
   );
+}
+
+export function getKanbanColumnByStatus(status: ApplicationStatus) {
+  return kanbanColumns.find((column) => column.statuses.includes(status));
+}
+
+export function getDropStatusForColumn(columnId: string) {
+  return kanbanColumns.find((column) => column.id === columnId)?.dropStatus;
 }
 
 export function getApplicationsForFocus(
@@ -167,7 +180,9 @@ export function getStatusClass(status: ApplicationStatus) {
   }
 }
 
-export function formatApplicationDate(dateString: string | Date | undefined) {
+export function formatApplicationDate(
+  dateString: string | Date | null | undefined,
+) {
   if (!dateString) {
     return "Not specified";
   }
