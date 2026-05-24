@@ -189,7 +189,7 @@ function DraggableApplicationCard({
   onOpenLtcScore: (application: Application) => void;
 }) {
   const applicationId = getApplicationIdentifier(application);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: applicationId,
       disabled: isUpdating,
@@ -203,7 +203,6 @@ function DraggableApplicationCard({
       } ${isUpdating ? "applications-page__card--updating" : ""}`}
       style={{
         transform: CSS.Transform.toString(transform),
-        transition,
         viewTransitionName: getCardTransitionName(applicationId),
       }}
       {...listeners}
