@@ -1,12 +1,12 @@
 .analytics-page {
   min-height: 100vh;
-  height: 100vh;
+  height: auto;
   padding: 28px 24px 28px 104px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .analytics-page::before {
