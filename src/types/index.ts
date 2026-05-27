@@ -56,6 +56,11 @@ export interface Profile {
   workAuthorization: string;
 }
 
+export interface ProfileMutationResult {
+  profile: Profile;
+  message: string;
+}
+
 export type ProfileUpdatePayload = Partial<
   Omit<Profile, "userId" | "email">
 >;

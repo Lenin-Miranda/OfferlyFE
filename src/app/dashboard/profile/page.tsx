@@ -6,13 +6,16 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
 import {
   FiArrowRight,
   FiAtSign,
   FiBriefcase,
+  FiFileText,
   FiGlobe,
   FiLayers,
   FiMapPin,
@@ -20,6 +23,7 @@ import {
   FiSave,
   FiShield,
   FiTarget,
+  FiUploadCloud,
   FiUser,
 } from "react-icons/fi";
 import ErrorMessage from "@/app/components/ErrorMessage/ErrorMessage";
@@ -30,9 +34,15 @@ import {
   EMPTY_PROFILE,
   getProfile,
   parseCommaSeparatedList,
+  summarizeResumeToProfile,
   updateProfile,
 } from "@/lib/profile";
-import { Profile, ProfileUpdatePayload, RemotePreference } from "@/types";
+import {
+  Profile,
+  ProfileMutationResult,
+  ProfileUpdatePayload,
+  RemotePreference,
+} from "@/types";
 import "./page.css";
 
 interface ProfileFormState {
@@ -62,6 +72,11 @@ const REMOTE_PREFERENCE_OPTIONS: Array<{
 type ProfileFieldChangeEvent = ChangeEvent<
   HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 >;
+
+function isPdfFile(file: File) {
+  const normalizedName = file.name.toLowerCase();
+  return file.type === "application/pdf" || normalizedName.endsWith(".pdf");
+}
 
 function buildFormState(profile: Profile): ProfileFormState {
   return {
@@ -149,10 +164,13 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [loadError, setLoadError] = useState("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeError, setResumeError] = useState("");
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
+  const resumeInputRef = useRef<HTMLInputElement | null>(null);
 
   const loadProfileData = useCallback(async () => {
     try {
@@ -183,6 +201,36 @@ export default function ProfilePage() {
 
     return () => window.clearTimeout(timeoutId);
   }, [notification]);
+
+  const summarizeResumeMutation = useMutation<
+    ProfileMutationResult,
+    Error,
+    File
+  >({
+    mutationFn: summarizeResumeToProfile,
+    onSuccess: (response) => {
+      setProfile(response.profile);
+      setFormState(buildFormState(response.profile));
+      setFieldErrors({});
+      setResumeFile(null);
+      setResumeError("");
+
+      if (resumeInputRef.current) {
+        resumeInputRef.current.value = "";
+      }
+
+      setNotification({
+        message: response.message,
+        type: "success",
+      });
+    },
+    onError: (error) => {
+      setNotification({
+        message: error.message,
+        type: "error",
+      });
+    },
+  });
 
   const parsedSkills = useMemo(
     () => parseCommaSeparatedList(formState.skillsInput),
@@ -240,6 +288,44 @@ export default function ProfilePage() {
   const handleReset = () => {
     setFormState(buildFormState(profile));
     setFieldErrors({});
+  };
+
+  const handleResumeFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const nextFile = event.target.files?.[0] ?? null;
+
+    if (!nextFile) {
+      setResumeFile(null);
+      setResumeError("");
+      return;
+    }
+
+    if (!isPdfFile(nextFile)) {
+      setResumeFile(null);
+      setResumeError("Please upload a PDF file.");
+      event.target.value = "";
+      setNotification({
+        message: "Only PDF resumes are supported.",
+        type: "error",
+      });
+      return;
+    }
+
+    setResumeFile(nextFile);
+    setResumeError("");
+  };
+
+  const handleAnalyzeResume = () => {
+    if (!resumeFile) {
+      setResumeError("Choose a PDF resume before analyzing it.");
+      setNotification({
+        message: "Please choose a PDF resume first.",
+        type: "error",
+      });
+      return;
+    }
+
+    setResumeError("");
+    summarizeResumeMutation.mutate(resumeFile);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -388,6 +474,67 @@ export default function ProfilePage() {
                     </p>
                   </div>
                 ) : null}
+
+                <section className="profile-page__resume-card">
+                  <div className="profile-page__resume-copy">
+                    <span className="profile-page__section-eyebrow">
+                      Autocomplete from CV
+                    </span>
+                    <h3>Import the essentials from your PDF resume</h3>
+                    <p>
+                      Upload your latest CV and Offerly will infer profile fields
+                      like summary, skills, experience, and preferred roles.
+                    </p>
+                  </div>
+
+                  <div className="profile-page__resume-controls">
+                    <label className="profile-page__field">
+                      <span className="profile-page__field-label">
+                        <FiFileText />
+                        Resume PDF
+                      </span>
+                      <input
+                        ref={resumeInputRef}
+                        type="file"
+                        accept="application/pdf,.pdf"
+                        onChange={handleResumeFileChange}
+                        className="profile-page__file-input"
+                        disabled={summarizeResumeMutation.isPending}
+                      />
+                      {resumeError ? (
+                        <span className="profile-page__field-error">
+                          {resumeError}
+                        </span>
+                      ) : (
+                        <span className="profile-page__field-hint">
+                          PDF only. We&apos;ll keep your current email and refresh
+                          the rest from the backend response.
+                        </span>
+                      )}
+                      <span className="profile-page__file-meta">
+                        {resumeFile
+                          ? `Selected: ${resumeFile.name}`
+                          : "No PDF selected yet"}
+                      </span>
+                    </label>
+
+                    <button
+                      type="button"
+                      className="profile-page__button profile-page__button--primary profile-page__resume-button"
+                      onClick={handleAnalyzeResume}
+                      disabled={
+                        isLoading ||
+                        summarizeResumeMutation.isPending ||
+                        !resumeFile
+                      }
+                    >
+                      <FiUploadCloud />
+                      {summarizeResumeMutation.isPending
+                        ? "Analyzing..."
+                        : "Analyze CV"}
+                    </button>
+                  </div>
+                </section>
 
                 <div className="profile-page__grid">
                   <label className="profile-page__field">

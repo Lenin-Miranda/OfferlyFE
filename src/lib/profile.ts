@@ -1,5 +1,5 @@
 import { api } from "./axios";
-import { Profile, ProfileUpdatePayload } from "@/types";
+import { Profile, ProfileMutationResult, ProfileUpdatePayload } from "@/types";
 
 interface ProfileResponse {
   profile?: Partial<Profile> | null;
@@ -54,7 +54,7 @@ export async function getProfile(): Promise<Profile> {
 
 export async function updateProfile(
   updates: ProfileUpdatePayload,
-): Promise<{ profile: Profile; message: string }> {
+): Promise<ProfileMutationResult> {
   const response = await api.patch<ProfileResponse>("/profile", updates);
 
   return {
@@ -67,5 +67,69 @@ export function parseCommaSeparatedList(value: string) {
   return value
     .split(",")
     .map((item) => item.trim())
-    .filter((item, index, array) => item.length > 0 && array.indexOf(item) === index);
+    .filter(
+      (item, index, array) => item.length > 0 && array.indexOf(item) === index,
+    );
+}
+
+export async function summarizeResumeToProfile(
+  resumeFile: File,
+): Promise<ProfileMutationResult> {
+  const formData = new FormData();
+  formData.append("resume", resumeFile);
+
+  try {
+    const baseUrl = api.defaults.baseURL ?? "";
+    const response = await fetch(`${baseUrl}/profile/summarize-resume`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = (await response.json().catch(() => null)) as
+      | ProfileResponse
+      | { message?: string }
+      | null;
+
+    if (!response.ok) {
+      const apiMessage =
+        data && typeof data.message === "string" ? data.message : "";
+
+      if (apiMessage) {
+        throw new Error(apiMessage);
+      }
+
+      if (response.status === 400) {
+        throw new Error("Please upload a valid PDF resume and try again.");
+      }
+
+      if (response.status === 401) {
+        throw new Error("Your session expired. Please sign in and try again.");
+      }
+
+      throw new Error(
+        "We couldn't analyze your resume right now. Please try again in a moment.",
+      );
+    }
+
+    const profileData =
+      data && "profile" in data ? data.profile : undefined;
+
+    return {
+      profile: normalizeProfile(profileData),
+      message:
+        data?.message ||
+        "Profile updated with summarized resume data successfully",
+    };
+  } catch (error) {
+    console.error("Error summarizing resume into profile:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error(
+      "We couldn't analyze your resume right now. Please try again in a moment.",
+    );
+  }
 }

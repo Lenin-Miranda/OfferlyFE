@@ -219,6 +219,47 @@
   gap: 20px;
 }
 
+.profile-page__resume-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 1fr);
+  gap: 18px;
+  padding: 20px;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(219, 234, 254, 0.58) 0%,
+    rgba(255, 255, 255, 0.92) 52%,
+    rgba(254, 249, 195, 0.62) 100%
+  );
+  border: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.profile-page__resume-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-page__resume-copy h3 {
+  margin: 0;
+  color: #111827;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  line-height: 1.2;
+}
+
+.profile-page__resume-copy p {
+  margin: 0;
+  color: rgba(17, 24, 39, 0.66);
+  line-height: 1.7;
+}
+
+.profile-page__resume-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
 .profile-page__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -275,8 +316,36 @@
   resize: vertical;
 }
 
+.profile-page__file-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(17, 24, 39, 0.18);
+  background: rgba(255, 255, 255, 0.94);
+  color: #111827;
+  font: inherit;
+}
+
+.profile-page__file-input::file-selector-button {
+  margin-right: 12px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(17, 24, 39, 0.08);
+  color: #111827;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.profile-page__file-input:disabled,
+.profile-page__file-input:disabled::file-selector-button {
+  cursor: not-allowed;
+}
+
 .profile-page__input:focus,
-.profile-page__textarea:focus {
+.profile-page__textarea:focus,
+.profile-page__file-input:focus {
   outline: none;
   border-color: rgba(17, 24, 39, 0.24);
   box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.06);
@@ -316,6 +385,13 @@
   color: rgba(17, 24, 39, 0.56);
 }
 
+.profile-page__file-meta {
+  color: rgba(17, 24, 39, 0.62);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
 .profile-page__tags {
   display: flex;
   flex-wrap: wrap;
@@ -339,6 +415,10 @@
 .profile-page__actions {
   justify-content: flex-end;
   padding-top: 4px;
+}
+
+.profile-page__resume-button {
+  width: 100%;
 }
 
 .profile-page__empty-banner,
@@ -396,7 +476,8 @@
   }
 
   .profile-page__stats,
-  .profile-page__grid {
+  .profile-page__grid,
+  .profile-page__resume-card {
     grid-template-columns: 1fr;
   }
 
@@ -421,7 +502,8 @@
   }
 
   .profile-page__button,
-  .profile-page__state-action {
+  .profile-page__state-action,
+  .profile-page__resume-button {
     width: 100%;
   }
 
