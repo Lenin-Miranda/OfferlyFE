@@ -1,24 +1,16 @@
 "use client";
 
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import {
-  FiBriefcase,
-  FiCheckCircle,
-  FiFileText,
-  FiTarget,
-} from "react-icons/fi";
+import { useContext, useEffect, useRef, useState } from "react";
+import { FiCheckCircle, FiZap } from "react-icons/fi";
 import ErrorMessage from "@/app/components/ErrorMessage/ErrorMessage";
 import { ErrorContext } from "@/contexts/ErrorContext";
 import Sidebar from "../components/Sidebar";
 import ResumeTailorForm from "../components/ResumeTailorForm";
 import ResumeTailorResult from "../components/ResumeTailorResult";
-import { ApplicationContext } from "@/contexts/ApplicationContext";
 import { useResumeTailor } from "@/hooks/useResumeTailor";
-import { getApplicationOverviewStats } from "../applicationHelpers";
 import "./page.css";
 
 export default function TaylorPage() {
-  const { applications } = useContext(ApplicationContext);
   const { setErrorMessage, isOpen, setIsOpen } = useContext(ErrorContext);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [jobPost, setJobPost] = useState("");
@@ -43,11 +35,6 @@ export default function TaylorPage() {
       });
     }
   }, [result, isLoading]);
-
-  const applicationStats = useMemo(
-    () => getApplicationOverviewStats(applications),
-    [applications],
-  );
 
   const displayedError = formError ?? error;
 
@@ -120,56 +107,28 @@ export default function TaylorPage() {
     <>
       <Sidebar />
       <main className="taylor-page">
-        <section className="taylor-page__hero" data-aos="fade-up">
-          <div className="taylor-page__hero-copy">
-            <span className="taylor-page__eyebrow">Taylor Workspace</span>
-            <h1 className="taylor-page__title">
-              Tailor each resume to the job without losing your format
-            </h1>
-            <p className="taylor-page__subtitle">
-              Upload a PDF, paste the full job post, and review every applied or
-              skipped change before you send your application.
-            </p>
-          </div>
-
-          <div className="taylor-page__stats">
-            <article className="taylor-page__stat-card">
-              <FiBriefcase />
-              <strong>{applicationStats.total}</strong>
-              <span>Total applications tracked</span>
-            </article>
-            <article className="taylor-page__stat-card">
-              <FiTarget />
-              <strong>{applicationStats.active}</strong>
-              <span>Active applications</span>
-            </article>
-            <article className="taylor-page__stat-card">
+        <header className="taylor-page__header" data-aos="fade-up">
+          <span className="taylor-page__eyebrow">Taylor Workspace</span>
+          <h1 className="taylor-page__title">
+            Tailor each resume to the role without losing your format
+          </h1>
+          <div className="taylor-page__hints">
+            <span>
               <FiCheckCircle />
-              <strong>{applicationStats.interviewing}</strong>
-              <span>Interview pipeline</span>
-            </article>
+              Preserves your PDF layout whenever possible
+            </span>
+            <span>
+              <FiZap />
+              Skips edits that would break the available line space
+            </span>
           </div>
-        </section>
-
-        <section
-          className="taylor-page__guidance"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          <div className="taylor-page__guidance-card">
-            <FiFileText />
-            <p>
-              The AI tries to preserve the same resume layout and may skip edits
-              when a replacement would break the available line space.
-            </p>
-          </div>
-        </section>
+        </header>
 
         <section className="taylor-page__content">
           <div
             className="taylor-page__form-panel"
             data-aos="fade-right"
-            data-aos-delay="140"
+            data-aos-delay="80"
           >
             <ResumeTailorForm
               selectedFile={selectedFile}
@@ -186,7 +145,7 @@ export default function TaylorPage() {
             ref={resultPanelRef}
             className="taylor-page__result-panel"
             data-aos="fade-left"
-            data-aos-delay="200"
+            data-aos-delay="120"
           >
             <ResumeTailorResult
               result={result}

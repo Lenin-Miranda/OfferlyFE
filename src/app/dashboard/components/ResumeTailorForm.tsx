@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useRef } from "react";
 import {
-  FiCheckCircle,
   FiFileText,
   FiRefreshCcw,
   FiUploadCloud,
@@ -41,28 +40,6 @@ export default function ResumeTailorForm({
 
   return (
     <section className="resume-tailor-form">
-      <div className="resume-tailor-form__header">
-        <span className="resume-tailor-form__eyebrow">AI Resume Tailoring</span>
-        <h2 className="resume-tailor-form__title">
-          Match your resume to the role without rebuilding the layout
-        </h2>
-        <p className="resume-tailor-form__subtitle">
-          Upload your current PDF resume, paste the full job post, and we will
-          tailor the content while trying to preserve the same formatting.
-        </p>
-      </div>
-
-      <div className="resume-tailor-form__tips">
-        <div className="resume-tailor-form__tip">
-          <FiCheckCircle />
-          <span>Keeps the original PDF structure whenever possible.</span>
-        </div>
-        <div className="resume-tailor-form__tip">
-          <FiZap />
-          <span>Some edits may be skipped if a replacement no longer fits.</span>
-        </div>
-      </div>
-
       <div className="resume-tailor-form__field-group">
         <div className="resume-tailor-form__field-header">
           <label className="resume-tailor-form__label">Resume PDF</label>
