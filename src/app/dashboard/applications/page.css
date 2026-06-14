@@ -472,12 +472,9 @@
 }
 
 .applications-page__card--dragging {
-  opacity: 0.18;
-  transform: scale(0.985);
+  opacity: 0;
+  pointer-events: none;
   cursor: grabbing;
-  box-shadow:
-    0 4px 14px rgba(15, 23, 42, 0.07),
-    0 0 0 1px rgba(17, 24, 39, 0.07);
 }
 
 .applications-page__card--updating {

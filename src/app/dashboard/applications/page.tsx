@@ -231,7 +231,6 @@ function DroppableColumnBody({
 }) {
   const { isOver, setNodeRef } = useDroppable({
     id: columnId,
-    disabled: !isDragActive,
   });
 
   return (
