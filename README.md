@@ -1,87 +1,59 @@
-# OfferlyFE
+# Offerly Frontend
 
-A web application to track and organize job applications efficiently.
+Next.js application for organizing job applications, reviewing application statistics and managing candidate information. Uses React, TypeScript, React Query, Axios and Zustand.
 
-## Description
+**Backend:** [OfferlyBE](https://github.com/Lenin-Miranda/OfferlyBE).
 
-OfferlyFE is a frontend application built with Next.js that allows users to manage their job applications. Users can add, edit, delete, and organize their job applications in a Kanban-style board.
+## Setup
 
-## Features
-
-- Main dashboard with application statistics
-- Kanban system to organize applications by status
-- Modal for adding/editing job applications
-- Application states: Saved, Applied, In Progress, Closed
-- Confirmation for edit/delete actions
-- Success/error notifications
-- Responsive design
-- User authentication
-
-## Technologies
-
-- Next.js 16.1.6
-- React 19.2.3
-- TypeScript
-- React Query for state management
-- React Icons
-- AOS for animations
-- Axios for HTTP requests
-- Zustand for global state
-
-## Installation
-
-1. Clone the repository:
+Requires Node.js, npm and the backend for account and application data.
 
 ```bash
 git clone https://github.com/Lenin-Miranda/OfferlyFE.git
 cd OfferlyFE
-```
-
-2. Install dependencies:
-
-```bash
 npm install
 ```
 
-3. Start the development server:
+Create `.env.local`:
+
+```dotenv
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+NEXT_PUBLIC_APP_NAME=Offerly
+```
+
+Start the API on port `4000` with `CORS_ORIGIN=http://localhost:3000`, then:
 
 ```bash
 npm run dev
 ```
 
-4. Open http://localhost:3000 in your browser
+Open [localhost:3000](http://localhost:3000). The API value includes `/api`; leaving it unset uses the code's `http://localhost:3001/api` fallback, which must match your backend configuration.
 
-## Available Scripts
+## Features
 
-- `npm run dev` - Starts the development server
-- `npm run build` - Builds the app for production
-- `npm run start` - Starts the production application
-- `npm run lint` - Runs the linter
+- Application dashboard and Kanban-style organization.
+- Forms for creating and editing applications.
+- Account/login screens and request feedback.
+- Candidate-profile and resume-related API integration.
 
-## Project Structure
+Status values and payload types should be taken from the current frontend types and backend models when extending the board.
 
-```
-src/
-├── app/
-│   ├── Components/     # Reusable components
-│   ├── dashboard/      # Main dashboard page
-│   └── login/          # Login page
-├── contexts/           # React contexts
-├── hooks/              # Custom hooks
-├── lib/                # Utils and configurations
-├── providers/          # Application providers
-├── stores/             # Global states
-├── types/              # TypeScript definitions
-└── utils/              # Utility functions
-```
+## Commands
 
-## Application States
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run lint` | ESLint |
+| `npm run build` | Production build |
+| `npm start` | Serve the production build |
 
-- **Saved**: Application saved to apply later
-- **Applied**: Application submitted
-- **Interviewing**: Interview process ongoing
-- **Offer**: Offer received
-- **Rejected**: Application rejected
-- **Accepted**: Offer accepted
-- **Withdrawn**: Application withdrawn
-- **Ghosted**: No response from employer
+## Structure
+
+- `src/app/`: routes, dashboard and UI components.
+- `src/lib/`: API clients and shared helpers.
+- `src/hooks/`, `src/providers/`, `src/stores/`: data/state behavior.
+- `src/types/`: TypeScript data contracts.
+
+## Troubleshooting
+
+Restart Next.js after environment changes. If login does not persist, confirm the API origin, CORS credentials and cookie settings on both sides. AI-assisted endpoints need the backend's provider configuration; no provider secret belongs in a `NEXT_PUBLIC_*` variable. No automated test script is configured.
